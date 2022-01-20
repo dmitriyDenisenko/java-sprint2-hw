@@ -1,11 +1,14 @@
+package Backend.AllTypesTasks;
+
 import java.util.ArrayList;
 import java.util.Objects;
 
 public class Epic extends Task {
-    protected ArrayList<Subtask> subtasks = new ArrayList<>();
+    private ArrayList<Subtask> subtasks = new ArrayList<>();
 
-    public Epic() {
-        status = generateStatusEpic();
+    public Epic(String name, String description) {
+        super(name, description);
+        this.setStatus(generateStatusEpic());
     }
 
     @Override
@@ -19,7 +22,7 @@ public class Epic extends Task {
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), subtasks, name, description);
+        return Objects.hash(super.hashCode(), subtasks, this.getName(), this.getDescription());
     }
 
     public void setSubtasks(ArrayList<Subtask> subtasks) {
@@ -33,28 +36,23 @@ public class Epic extends Task {
         int countNew = 0;
         int countDone = 0;
         int countInProgress = 0;
-        for (int i = 0; i < subtasks.size(); i++) {
-            Subtask subtask = subtasks.get(i);
+        for (Subtask subtask : subtasks) {
             String status = subtask.getStatus();
-            if (status == "NEW" && countDone == 0 && countInProgress == 0) {
+            if (status.equals("NEW")) {
                 countNew++;
-            } else if (status == "DONE" && countNew == 0 && countInProgress == 0) {
+            } else if (status.equals("DONE")) {
                 countDone++;
-            } else if (status == "IN_PROGRESS" && countNew == 0 && countDone == 0) {
+            } else if (status.equals("IN_PROGRESS")) {
                 countInProgress++;
             }
-            if ((countDone != 0 && (countNew != 0 || countInProgress != 0))
-                    || (countNew != 0 && (countDone != 0 || countInProgress != 0))
-                    || (countInProgress != 0 && (countNew != 0 && countDone != 0))) {
-                return "IN_PROGRESS";
-            }
         }
-        if (countNew != 0) {
-            return "NEW";
-        } else if (countDone != 0) {
+        if (countDone != 0 && countNew == 0 && countInProgress == 0) {
             return "DONE";
+        } else if (countNew != 0 && countDone == 0 && countInProgress == 0) {
+            return "NEW";
+        } else {
+            return "IN_PROGRESS";
         }
-        return "IN_PROGRESS";
     }
 
     @Override

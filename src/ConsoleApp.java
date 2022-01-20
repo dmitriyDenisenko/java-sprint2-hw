@@ -1,17 +1,18 @@
+import Backend.AllTypesTasks.Epic;
+import Backend.AllTypesTasks.Subtask;
+import Backend.AllTypesTasks.Task;
+import Backend.Manager;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
-public class Manager {
-    static HashMap<Integer, Task> tasks = new HashMap<>();
-    static HashMap<Integer, Epic> epics = new HashMap<>();
-    static HashMap<Integer, Subtask> Allsubtasks = new HashMap<>();
+public class ConsoleApp {
     static Scanner input = new Scanner(System.in);
-    static Scanner scanner = new Scanner(System.in);
+    static Manager manager = new Manager();
 
     public static void main(String[] args) {
-        System.out.println("Пришло время практики!");
-        System.out.println("Привет! Я трекер задач ;)");
+        System.out.println("Привет! Я консольная версия трекера задач :)");
         while (true) {
             printMenu();
             int command = input.nextInt();
@@ -23,18 +24,10 @@ public class Manager {
                     showAllEpics();
                     break;
                 case 3:
-                    System.out.println("Введите индефекатор эпика");
-                    int id = input.nextInt();
-                    if (epics.containsKey(id)) {
-                        showAllSubtasks(id);
-                    } else {
-                        System.out.println("Такого эпика нет.");
-                    }
+                    showAllSubtasks();
                     break;
                 case 4:
-                    System.out.println("Введите индефекатор задачи");
-                    int index = input.nextInt();
-                    printTaskAllType(index);
+                    printTaskAllType();
                     break;
                 case 5:
                     showMenuForAdding();
@@ -46,7 +39,7 @@ public class Manager {
                     showDeleteMenu();
                     break;
                 case 0:
-                    System.out.println("До встречи ;)");
+                    System.out.println("Лондон гудбай...");
                     return;
                 default:
                     System.out.println("Такой команды нет");
@@ -74,22 +67,21 @@ public class Manager {
         System.out.println("2- Эпик");
         System.out.println("3- Подзадача");
         int command = input.nextInt();
+        input.nextLine();
         switch (command) {
             case 1:
-                Task task = new Task();
-                addNewTask(task);
+                AddTaskOrEpic(command);
                 return;
             case 2:
-                Epic epic = new Epic();
-                addNewEpic(epic);
+                AddTaskOrEpic(command);
                 break;
             case 3:
                 System.out.println("Введите индефекатор эпика");
                 int id = input.nextInt();
+                input.nextLine();
+                HashMap<Integer, Epic> epics = manager.getEpics();
                 if (epics.containsKey(id)) {
-                    Epic mainEpic = epics.get(id);
-                    Subtask subtask = new Subtask(mainEpic);
-                    addNewSubtask(subtask);
+                    AddSubtask(id);
                 } else {
                     System.out.println("Такого эпика не существует, для начала создайте его.");
                 }
@@ -100,34 +92,39 @@ public class Manager {
         }
     }
 
-    public static void addNewTask(Task task) {
+    public static void AddTaskOrEpic(int command) {
         System.out.println("Введите название задачи");
-        task.inputSetName();
+        String name = input.nextLine();
         System.out.println("Введите описание");
-        task.inputSetDescription();
-        tasks.put(task.generateIndex(), task);
-        System.out.println("Индефекатор - " + task.index);
+        String description = input.nextLine();
+        switch (command) {
+            case 1:
+                Task task = new Task(name, description);
+                System.out.println("Индефекатор - " + task.getIndex());
+                manager.addAllTaskTypes(task);
+                break;
+            case 2:
+                Epic epic = new Epic(name, description);
+                System.out.println("Индефекатор - " + epic.getIndex());
+                manager.addAllTaskTypes(epic);
+                break;
+        }
     }
 
-    public static void addNewEpic(Epic epic) {
-        System.out.println("Введите название Эпика");
-        epic.inputSetName();
+    public static void AddSubtask(int id) {
+        System.out.println("Введите название задачи");
+        String name = input.nextLine();
         System.out.println("Введите описание");
-        epic.inputSetDescription();
-        epics.put(epic.generateIndex(), epic);
-        System.out.println("Индефекатор - " + epic.index);
-    }
-
-    public static void addNewSubtask(Subtask subtask) {
-        System.out.println("Введите название Подзадачи");
-        subtask.inputSetName();
-        System.out.println("Введите описание");
-        subtask.inputSetDescription();
-        Allsubtasks.put(subtask.hashCode(), subtask);
-        System.out.println("Индефекатор - " + subtask.index);
+        String description = input.nextLine();
+        HashMap<Integer, Epic> epics = manager.getEpics();
+        Epic mainEpic = epics.get(id);
+        Subtask subtask = new Subtask(mainEpic, name, description);
+        System.out.println("Индефекатор - " + subtask.generateIndex());
+        manager.addAllTaskTypes(subtask);
     }
 
     public static void showAllTasks() {
+        HashMap<Integer, Task> tasks = manager.getTasks();
         for (int id : tasks.keySet()) {
             Task task = tasks.get(id);
             System.out.println("Название: " + task.getName() + "; ID: " + id + "; Status: " + task.getStatus());
@@ -135,28 +132,40 @@ public class Manager {
     }
 
     public static void showAllEpics() {
+        HashMap<Integer, Epic> epics = manager.getEpics();
         for (int id : epics.keySet()) {
             Epic epic = epics.get(id);
             System.out.println("Название: " + epic.getName() + "; ID: " + id + "; Status: " + epic.getStatus());
         }
     }
 
-    public static void showAllSubtasks(int id) {
-        Epic epic = epics.get(id);
-        ArrayList<Subtask> subtasks = epic.getSubtasks();
-        if (!subtasks.isEmpty()) {
-            for (int i = 0; i < subtasks.size(); i++) {
-                Subtask subtask = subtasks.get(i);
-                System.out.println("Название: " + subtask.name + "; id: " + subtask.hashCode() + "; status: "
-                        + subtask.getStatus());
+    public static void showAllSubtasks() {
+        System.out.println("Введите индефекатор эпика");
+        int id = input.nextInt();
+        HashMap<Integer, Epic> epics = manager.getEpics();
+        if (epics.containsKey(id)) {
+            Epic epic = epics.get(id);
+            ArrayList<Subtask> subtasks = manager.getSubtasksEpic(epic);
+            if (!subtasks.isEmpty()) {
+                for (int i = 0; i < subtasks.size(); i++) {
+                    Subtask subtask = subtasks.get(i);
+                    System.out.println("Название: " + subtask.getName() + "; id: " + subtask.hashCode() + "; status: "
+                            + subtask.getStatus());
+                }
+            } else {
+                System.out.println("У этого эпика нет подзадач");
             }
         } else {
-            System.out.println("У этого эпика нет подзадач");
+            System.out.println("Такого эпика не существует.");
         }
-
     }
 
-    public static void printTaskAllType(int id) {
+    public static void printTaskAllType() {
+        System.out.println("Введите индефекатор задачи");
+        int id = input.nextInt();
+        HashMap<Integer, Task> tasks = manager.getTasks();
+        HashMap<Integer, Epic> epics = manager.getEpics();
+        HashMap<Integer, Subtask> Allsubtasks = manager.getAllsubtasks();
         if (tasks.containsKey(id)) {
             Task task = tasks.get(id);
             System.out.println("Название: " + task.getName() + "; ID: " + id + "; Status: " + task.getStatus()
@@ -167,7 +176,7 @@ public class Manager {
                     + "; Описание:" + epic.getDescription());
         } else if (Allsubtasks.containsKey(id)) {
             Subtask subtask = Allsubtasks.get(id);
-            System.out.println("Название: " + subtask.name + "; id: " + subtask.hashCode() + "; status: "
+            System.out.println("Название: " + subtask.getName() + "; id: " + subtask.hashCode() + "; status: "
                     + subtask.getStatus() + "; Описание:" + subtask.getDescription());
         } else {
             System.out.println("Такой задачи нет");
@@ -177,25 +186,29 @@ public class Manager {
     public static void showMenuForUpdate() {
         System.out.println("Введите индефекатор задачи");
         int id = input.nextInt();
+        input.nextLine();
+        HashMap<Integer, Task> tasks = manager.getTasks();
+        HashMap<Integer, Epic> epics = manager.getEpics();
+        HashMap<Integer, Subtask> Allsubtasks = manager.getAllsubtasks();
         if (tasks.containsKey(id)) {
             Task task = tasks.get(id);
-            updateTask(task, id);
+            addUpdate(task, id);
         } else if (epics.containsKey(id)) {
             Epic epic = epics.get(id);
-            updateEpic(epic);
+            addUpdate(epic);
         } else if (Allsubtasks.containsKey(id)) {
             Subtask subtask = Allsubtasks.get(id);
-            updateSubtask(subtask, id);
+            addUpdate(subtask, id);
         } else {
             System.out.println("Такой задачи нет");
         }
     }
 
-    public static void updateTask(Task task, int id) {
+    public static void addUpdate(Task task, int id) {
         System.out.println("Введите новое название");
-        task.inputSetName();
+        task.setName(input.nextLine());
         System.out.println("Введите новое описание");
-        task.inputSetDescription();
+        task.setDescription(input.nextLine());
         System.out.println("Выбирите статус задачи:");
         System.out.println("1- IN_PROGRESS");
         System.out.println("2- DONE");
@@ -205,10 +218,12 @@ public class Manager {
             if (choose == 1) {
                 status = "IN_PROGRESS";
                 task.setStatus(status);
+                manager.updateAllTypeTask(task);
                 break;
             } else if (choose == 2) {
                 status = "DONE";
                 task.setStatus(status);
+                manager.updateAllTypeTask(task);
                 break;
             } else {
                 System.out.println("Не верная команда, введите правильную команду");
@@ -216,18 +231,19 @@ public class Manager {
         }
     }
 
-    public static void updateEpic(Epic epic) {
+    public static void addUpdate(Epic epic) {
         System.out.println("Введите новое название");
-        epic.inputSetName();
+        epic.setName(input.nextLine());
         System.out.println("Введите новое описание");
-        epic.inputSetDescription();
+        epic.setDescription((input.nextLine()));
+        manager.updateAllTypeTask(epic);
     }
 
-    public static void updateSubtask(Subtask subtask, int id) {
+    public static void addUpdate(Subtask subtask, int id) {
         System.out.println("Введите новое название");
-        subtask.inputSetName();
+        subtask.setName(input.nextLine());
         System.out.println("Введите новое описание");
-        subtask.inputSetDescription();
+        subtask.setDescription(input.nextLine());
         System.out.println("Выбирите статус задачи:");
         System.out.println("1- IN_PROGRESS");
         System.out.println("2- DONE");
@@ -237,10 +253,12 @@ public class Manager {
             if (choose == 1) {
                 status = "IN_PROGRESS";
                 subtask.setStatus(status);
+                manager.updateAllTypeTask(subtask);
                 break;
             } else if (choose == 2) {
                 status = "DONE";
                 subtask.setStatus(status);
+                manager.updateAllTypeTask(subtask);
                 break;
             } else {
                 System.out.println("Не верная команда, введите правильную команду");
@@ -255,43 +273,17 @@ public class Manager {
             System.out.println("2- Удаление по индификатору");
             int command = input.nextInt();
             if (command == 1) {
-                tasks.clear();
-                epics.clear();
-                Allsubtasks.clear();
+                manager.removeAll();
                 break;
             } else if (command == 2) {
                 System.out.println("Введите индефекатор задачи");
                 int id = input.nextInt();
-                removeByIndex(id);
+                manager.removeByIndex(id);
                 break;
             } else {
                 System.out.println("Такой команды не существует");
             }
         }
 
-    }
-
-    public static void removeByIndex(int id) {
-        if (tasks.containsKey(id)) {
-            tasks.remove(id);
-        } else if (epics.containsKey(id)) {
-            Epic epic = epics.get(id);
-            ArrayList<Subtask> subtasks = epic.getSubtasks();
-            for (int i = 0; i < subtasks.size(); i++) {
-                Allsubtasks.remove(subtasks.get(i).index);
-            }
-            subtasks.clear();
-            epic.setSubtasks(subtasks);
-            epics.remove(id);
-        } else if (Allsubtasks.containsKey(id)) {
-            Subtask subtask = Allsubtasks.get(id);
-            Epic epic = subtask.mainEpic;
-            ArrayList<Subtask> subtasks = epic.getSubtasks();
-            subtasks.remove(id);
-            epic.setSubtasks(subtasks);
-            Allsubtasks.remove(id);
-        } else {
-            System.out.println("Такой задачи нет");
-        }
     }
 }
