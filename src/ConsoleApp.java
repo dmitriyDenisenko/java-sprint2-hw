@@ -1,7 +1,7 @@
-import Backend.AllTypesTasks.Epic;
-import Backend.AllTypesTasks.Subtask;
-import Backend.AllTypesTasks.Task;
-import Backend.Manager;
+import backend.allTypesTasks.Epic;
+import backend.allTypesTasks.Subtask;
+import backend.allTypesTasks.Task;
+import backend.Manager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -99,14 +99,14 @@ public class ConsoleApp {
         String description = input.nextLine();
         switch (command) {
             case 1:
-                Task task = new Task(name, description);
+                Task task = new Task(name, description, manager.getForAddSerialNumber());
                 System.out.println("Индефекатор - " + task.getIndex());
-                manager.addAllTaskTypes(task);
+                manager.addTask(task);
                 break;
             case 2:
-                Epic epic = new Epic(name, description);
+                Epic epic = new Epic(name, description, manager.getForAddSerialNumber());
                 System.out.println("Индефекатор - " + epic.getIndex());
-                manager.addAllTaskTypes(epic);
+                manager.addEpic(epic);
                 break;
         }
     }
@@ -118,9 +118,9 @@ public class ConsoleApp {
         String description = input.nextLine();
         HashMap<Integer, Epic> epics = manager.getEpics();
         Epic mainEpic = epics.get(id);
-        Subtask subtask = new Subtask(mainEpic, name, description);
-        System.out.println("Индефекатор - " + subtask.generateIndex());
-        manager.addAllTaskTypes(subtask);
+        Subtask subtask = new Subtask(mainEpic, name, description, manager.getForAddSerialNumber());
+        System.out.println("Индефекатор - " + subtask.getIndex());
+        manager.addSubtask(subtask);
     }
 
     public static void showAllTasks() {
@@ -149,7 +149,7 @@ public class ConsoleApp {
             if (!subtasks.isEmpty()) {
                 for (int i = 0; i < subtasks.size(); i++) {
                     Subtask subtask = subtasks.get(i);
-                    System.out.println("Название: " + subtask.getName() + "; id: " + subtask.hashCode() + "; status: "
+                    System.out.println("Название: " + subtask.getName() + "; id: " + subtask.getIndex() + "; status: "
                             + subtask.getStatus());
                 }
             } else {
@@ -165,7 +165,7 @@ public class ConsoleApp {
         int id = input.nextInt();
         HashMap<Integer, Task> tasks = manager.getTasks();
         HashMap<Integer, Epic> epics = manager.getEpics();
-        HashMap<Integer, Subtask> Allsubtasks = manager.getAllsubtasks();
+        HashMap<Integer, Subtask> Allsubtasks = manager.getAllSubtasks();
         if (tasks.containsKey(id)) {
             Task task = tasks.get(id);
             System.out.println("Название: " + task.getName() + "; ID: " + id + "; Status: " + task.getStatus()
@@ -189,15 +189,15 @@ public class ConsoleApp {
         input.nextLine();
         HashMap<Integer, Task> tasks = manager.getTasks();
         HashMap<Integer, Epic> epics = manager.getEpics();
-        HashMap<Integer, Subtask> Allsubtasks = manager.getAllsubtasks();
+        HashMap<Integer, Subtask> AllSubtasks = manager.getAllSubtasks();
         if (tasks.containsKey(id)) {
             Task task = tasks.get(id);
             addUpdate(task, id);
         } else if (epics.containsKey(id)) {
             Epic epic = epics.get(id);
             addUpdate(epic);
-        } else if (Allsubtasks.containsKey(id)) {
-            Subtask subtask = Allsubtasks.get(id);
+        } else if (AllSubtasks.containsKey(id)) {
+            Subtask subtask = AllSubtasks.get(id);
             addUpdate(subtask, id);
         } else {
             System.out.println("Такой задачи нет");
@@ -218,12 +218,12 @@ public class ConsoleApp {
             if (choose == 1) {
                 status = "IN_PROGRESS";
                 task.setStatus(status);
-                manager.updateAllTypeTask(task);
+                manager.updateTask(task);
                 break;
             } else if (choose == 2) {
                 status = "DONE";
                 task.setStatus(status);
-                manager.updateAllTypeTask(task);
+                manager.updateTask(task);
                 break;
             } else {
                 System.out.println("Не верная команда, введите правильную команду");
@@ -236,7 +236,7 @@ public class ConsoleApp {
         epic.setName(input.nextLine());
         System.out.println("Введите новое описание");
         epic.setDescription((input.nextLine()));
-        manager.updateAllTypeTask(epic);
+        manager.updateEpic(epic);
     }
 
     public static void addUpdate(Subtask subtask, int id) {
@@ -253,12 +253,12 @@ public class ConsoleApp {
             if (choose == 1) {
                 status = "IN_PROGRESS";
                 subtask.setStatus(status);
-                manager.updateAllTypeTask(subtask);
+                manager.updateSubtask(subtask);
                 break;
             } else if (choose == 2) {
                 status = "DONE";
                 subtask.setStatus(status);
-                manager.updateAllTypeTask(subtask);
+                manager.updateSubtask(subtask);
                 break;
             } else {
                 System.out.println("Не верная команда, введите правильную команду");

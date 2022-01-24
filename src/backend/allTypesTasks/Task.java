@@ -1,4 +1,4 @@
-package Backend.AllTypesTasks;
+package backend.allTypesTasks;
 
 import java.util.Objects;
 
@@ -8,19 +8,14 @@ public class Task {
     private String status = "NEW";
     private int index;
 
-    public Task(String name, String description) {
+    public Task(String name, String description, int index) {
         this.name = name;
         this.description = description;
         this.status = "NEW";
-        index = hashCode();
+        this.index = index;
     }
 
     public int getIndex() {
-        return index;
-    }
-
-    public int generateIndex() {
-        index = hashCode();
         return index;
     }
 

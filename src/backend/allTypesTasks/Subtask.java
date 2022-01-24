@@ -1,17 +1,25 @@
-package Backend.AllTypesTasks;
+package backend.allTypesTasks;
 
 import java.util.ArrayList;
 import java.util.Objects;
 
 public class Subtask extends Task {
     private Epic mainEpic;
-    
-    public Subtask(Epic epic, String name, String description) {
-        super(name, description);
+
+    public Subtask(Epic epic, String name, String description, int index) {
+        super(name, description, index);
         this.mainEpic = epic;
-        ArrayList<Subtask> subtasks = new ArrayList<>();
+        registerSubtaskInEpic();
+    }
+
+    private void registerSubtaskInEpic() {
+        ArrayList<Subtask> subtasks = mainEpic.getSubtasks();
         subtasks.add(this);
-        epic.setSubtasks(subtasks);
+        mainEpic.setSubtasks(subtasks);
+    }
+
+    public Epic getMainEpic() {
+        return mainEpic;
     }
 
     @Override
@@ -21,10 +29,6 @@ public class Subtask extends Task {
         if (!super.equals(o)) return false;
         Subtask subtask = (Subtask) o;
         return Objects.equals(mainEpic, subtask.mainEpic);
-    }
-
-    public Epic getMainEpic() {
-        return mainEpic;
     }
 
     @Override

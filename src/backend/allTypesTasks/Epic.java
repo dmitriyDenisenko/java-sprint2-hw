@@ -1,4 +1,4 @@
-package Backend.AllTypesTasks;
+package backend.allTypesTasks;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -6,8 +6,8 @@ import java.util.Objects;
 public class Epic extends Task {
     private ArrayList<Subtask> subtasks = new ArrayList<>();
 
-    public Epic(String name, String description) {
-        super(name, description);
+    public Epic(String name, String description, int index) {
+        super(name, description, index);
         this.setStatus(generateStatusEpic());
     }
 
