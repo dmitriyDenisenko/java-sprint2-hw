@@ -1,4 +1,4 @@
-package backend.alltypestasks;
+package backend.tasks;
 
 import java.util.Objects;
 

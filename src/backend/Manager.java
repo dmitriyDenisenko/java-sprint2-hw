@@ -1,10 +1,9 @@
 package backend;
 
-import backend.alltypestasks.Epic;
-import backend.alltypestasks.Subtask;
-import backend.alltypestasks.Task;
+import backend.tasks.Epic;
+import backend.tasks.Subtask;
+import backend.tasks.Task;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Manager {
