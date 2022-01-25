@@ -1,6 +1,5 @@
-package backend.allTypesTasks;
+package backend.alltypestasks;
 
-import java.util.ArrayList;
 import java.util.Objects;
 
 public class Subtask extends Task {
@@ -9,13 +8,10 @@ public class Subtask extends Task {
     public Subtask(Epic epic, String name, String description, int index) {
         super(name, description, index);
         this.mainEpic = epic;
-        registerSubtaskInEpic();
     }
 
-    private void registerSubtaskInEpic() {
-        ArrayList<Subtask> subtasks = mainEpic.getSubtasks();
-        subtasks.add(this);
-        mainEpic.setSubtasks(subtasks);
+    public void setMainEpic(Epic mainEpic) {
+        this.mainEpic = mainEpic;
     }
 
     public Epic getMainEpic() {

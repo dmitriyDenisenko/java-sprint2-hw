@@ -1,4 +1,4 @@
-package backend.allTypesTasks;
+package backend.alltypestasks;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -11,18 +11,8 @@ public class Epic extends Task {
         this.setStatus(generateStatusEpic());
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-        Epic epic = (Epic) o;
-        return Objects.equals(subtasks, epic.subtasks);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), subtasks, this.getName(), this.getDescription());
+    public void setSubtask(Subtask subtask){
+        subtasks.add(subtask);
     }
 
     public void setSubtasks(ArrayList<Subtask> subtasks) {
@@ -55,13 +45,28 @@ public class Epic extends Task {
         }
     }
 
+    public ArrayList<Subtask> getSubtasks() {
+        return subtasks;
+    }
+
     @Override
     public String getStatus() {
         return generateStatusEpic();
     }
 
-    public ArrayList<Subtask> getSubtasks() {
-        return subtasks;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Epic epic = (Epic) o;
+        return Objects.equals(subtasks, epic.subtasks);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), subtasks, this.getName(), this.getDescription());
     }
 
 }
