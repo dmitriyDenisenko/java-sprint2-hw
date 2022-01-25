@@ -145,12 +145,11 @@ public class ConsoleApp {
         HashMap<Integer, Epic> epics = manager.getEpics();
         if (epics.containsKey(id)) {
             Epic epic = epics.get(id);
-            ArrayList<Subtask> subtasks = manager.getSubtasksEpic(epic);
+            HashMap<Integer, Subtask> subtasks = manager.getSubtasksEpic(epic);
             if (!subtasks.isEmpty()) {
-                for (int i = 0; i < subtasks.size(); i++) {
-                    Subtask subtask = subtasks.get(i);
+                for (Subtask subtask: subtasks.values()) {
                     System.out.println("Название: " + subtask.getName() + "; id: " + subtask.getIndex() + "; status: "
-                            + subtask.getStatus());
+                            + subtask.getStatus() + "; mainEpic " + subtask.getMainEpic().getName());
                 }
             } else {
                 System.out.println("У этого эпика нет подзадач");

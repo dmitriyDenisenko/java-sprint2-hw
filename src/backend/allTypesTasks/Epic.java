@@ -1,10 +1,11 @@
 package backend.alltypestasks;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Objects;
 
 public class Epic extends Task {
-    private ArrayList<Subtask> subtasks = new ArrayList<>();
+    private HashMap<Integer,Subtask> subtasks = new HashMap<>();
 
     public Epic(String name, String description, int index) {
         super(name, description, index);
@@ -12,10 +13,10 @@ public class Epic extends Task {
     }
 
     public void setSubtask(Subtask subtask){
-        subtasks.add(subtask);
+        subtasks.put(subtask.getIndex(), subtask);
     }
 
-    public void setSubtasks(ArrayList<Subtask> subtasks) {
+    public void setSubtasks(HashMap<Integer, Subtask> subtasks) {
         this.subtasks = subtasks;
     }
 
@@ -26,7 +27,7 @@ public class Epic extends Task {
         int countNew = 0;
         int countDone = 0;
         int countInProgress = 0;
-        for (Subtask subtask : subtasks) {
+        for (Subtask subtask : subtasks.values()) {
             String status = subtask.getStatus();
             if (status.equals("NEW")) {
                 countNew++;
@@ -45,7 +46,7 @@ public class Epic extends Task {
         }
     }
 
-    public ArrayList<Subtask> getSubtasks() {
+    public HashMap<Integer, Subtask> getSubtasks() {
         return subtasks;
     }
 
