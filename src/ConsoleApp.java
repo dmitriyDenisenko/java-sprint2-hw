@@ -1,10 +1,11 @@
-import backend.*;
+import backend.managers.InMemoryHistoryManager;
+import backend.managers.Managers;
+import backend.managers.TaskManager;
 import backend.tasks.Epic;
 import backend.tasks.StatusTask;
 import backend.tasks.Subtask;
 import backend.tasks.Task;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
@@ -155,7 +156,7 @@ public class ConsoleApp {
             Epic epic = epics.get(id);
             HashMap<Integer, Subtask> subtasks = manager.getSubtasksEpic(epic);
             if (!subtasks.isEmpty()) {
-                for (Subtask subtask: subtasks.values()) {
+                for (Subtask subtask : subtasks.values()) {
                     System.out.println("Название: " + subtask.getName() + "; id: " + subtask.getIndex() + "; status: "
                             + subtask.getStatus() + "; mainEpic " + subtask.getMainEpic().getName());
                 }
@@ -242,9 +243,9 @@ public class ConsoleApp {
                 subtask.setStatus(StatusTask.IN_PROGRESS);
                 manager.updateSubtask(subtask, id);
                 break;
-            } else if (choose == 2){
+            } else if (choose == 2) {
                 subtask.setStatus(StatusTask.DONE);
-                manager.updateSubtask(subtask,id);
+                manager.updateSubtask(subtask, id);
                 break;
             } else {
                 System.out.println("Не верная команда, введите правильную команду");
@@ -272,13 +273,14 @@ public class ConsoleApp {
         }
 
     }
+
     public static int getForAddSerialNumber() {
         return serialNumber++;
     }
 
-    public static void printHistory(){
+    public static void printHistory() {
         List<Task> allHistory = history.getHistory();
-        for(Task task: allHistory){
+        for (Task task : allHistory) {
             System.out.println("Название: " + task.getName() + "; ID: " + task.getIndex() + "; Status: " + task.getStatus());
         }
     }

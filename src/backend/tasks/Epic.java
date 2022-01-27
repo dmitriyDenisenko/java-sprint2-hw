@@ -4,14 +4,14 @@ import java.util.HashMap;
 import java.util.Objects;
 
 public class Epic extends Task {
-    private HashMap<Integer,Subtask> subtasks = new HashMap<>();
+    private HashMap<Integer, Subtask> subtasks = new HashMap<>();
 
     public Epic(String name, String description, int index) {
         super(name, description, index);
         this.setStatus(generateStatusEpic());
     }
 
-    public void setSubtask(Subtask subtask){
+    public void setSubtask(Subtask subtask) {
         subtasks.put(subtask.getIndex(), subtask);
     }
 
