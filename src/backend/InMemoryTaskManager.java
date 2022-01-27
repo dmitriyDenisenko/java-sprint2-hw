@@ -9,7 +9,7 @@ import java.util.HashMap;
 public class InMemoryTaskManager implements TaskManager{
     private HashMap<Integer, Task> tasks = new HashMap<>();
     private HashMap<Integer, Epic> epics = new HashMap<>();
-    private int serialNumber = 0;
+
 
     @Override
     public HashMap<Integer, Task> getTasks() {
@@ -148,7 +148,4 @@ public class InMemoryTaskManager implements TaskManager{
         return null;
     }
 
-    public int getForAddSerialNumber() {
-        return serialNumber++;
-    }
 }

@@ -1,3 +1,5 @@
+import backend.Managers;
+import backend.TaskManager;
 import backend.tasks.Epic;
 import backend.tasks.StatusTask;
 import backend.tasks.Subtask;
@@ -9,7 +11,8 @@ import java.util.Scanner;
 
 public class ConsoleApp {
     static Scanner input = new Scanner(System.in);
-    static InMemoryTaskManager manager = new InMemoryTaskManager();
+    static TaskManager manager = Managers.getDefault();
+    static int serialNumber = 0;
 
     public static void main(String[] args) {
         System.out.println("Привет! Я консольная версия трекера задач :)");
@@ -99,12 +102,12 @@ public class ConsoleApp {
         String description = input.nextLine();
         switch (command) {
             case 1:
-                Task task = new Task(name, description, manager.getForAddSerialNumber());
+                Task task = new Task(name, description, getForAddSerialNumber());
                 System.out.println("Индефекатор - " + task.getIndex());
                 manager.addTask(task);
                 break;
             case 2:
-                Epic epic = new Epic(name, description, manager.getForAddSerialNumber());
+                Epic epic = new Epic(name, description, getForAddSerialNumber());
                 System.out.println("Индефекатор - " + epic.getIndex());
                 manager.addEpic(epic);
                 break;
@@ -118,7 +121,7 @@ public class ConsoleApp {
         String description = input.nextLine();
         HashMap<Integer, Epic> epics = manager.getEpics();
         Epic mainEpic = epics.get(id);
-        Subtask subtask = new Subtask(mainEpic, name, description, manager.getForAddSerialNumber());
+        Subtask subtask = new Subtask(mainEpic, name, description, getForAddSerialNumber());
         System.out.println("Индефекатор - " + subtask.getIndex());
         manager.addSubtask(subtask, id);
     }
@@ -263,5 +266,8 @@ public class ConsoleApp {
             }
         }
 
+    }
+    public static int getForAddSerialNumber() {
+        return serialNumber++;
     }
 }
