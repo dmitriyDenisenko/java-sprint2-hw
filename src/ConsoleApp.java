@@ -1,14 +1,14 @@
 import backend.tasks.Epic;
 import backend.tasks.Subtask;
 import backend.tasks.Task;
-import backend.Manager;
+import backend.InMemoryTaskManager;
 
 import java.util.HashMap;
 import java.util.Scanner;
 
 public class ConsoleApp {
     static Scanner input = new Scanner(System.in);
-    static Manager manager = new Manager();
+    static InMemoryTaskManager manager = new InMemoryTaskManager();
 
     public static void main(String[] args) {
         System.out.println("Привет! Я консольная версия трекера задач :)");
@@ -161,24 +161,8 @@ public class ConsoleApp {
     public static void printTaskAllType() {
         System.out.println("Введите индефекатор задачи");
         int id = input.nextInt();
-        HashMap<Integer, Task> tasks = manager.getTasks();
-        HashMap<Integer, Epic> epics = manager.getEpics();
-        HashMap<Integer, Subtask> allSubtasks = manager.getAllSubtasks();
-        if (tasks.containsKey(id)) {
-            Task task = tasks.get(id);
-            System.out.println("Название: " + task.getName() + "; ID: " + id + "; Status: " + task.getStatus()
-                    + "; Описание:" + task.getDescription());
-        } else if (epics.containsKey(id)) {
-            Epic epic = epics.get(id);
-            System.out.println("Название: " + epic.getName() + "; ID: " + id + "; Status: " + epic.getStatus()
-                    + "; Описание:" + epic.getDescription());
-        } else if (allSubtasks.containsKey(id)) {
-            Subtask subtask = allSubtasks.get(id);
-            System.out.println("Название: " + subtask.getName() + "; id: " + subtask.hashCode() + "; status: "
-                    + subtask.getStatus() + "; Описание:" + subtask.getDescription());
-        } else {
-            System.out.println("Такой задачи нет");
-        }
+        Task task = manager.getAllTypeTaskById(id);
+        System.out.println("Название: " + task.getName() + "; ID: " + id + "; Status: " + task.getStatus());
     }
 
     public static void showMenuForUpdate() {
