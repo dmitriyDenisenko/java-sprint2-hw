@@ -1,4 +1,5 @@
 import backend.tasks.Epic;
+import backend.tasks.StatusTask;
 import backend.tasks.Subtask;
 import backend.tasks.Task;
 import backend.InMemoryTaskManager;
@@ -198,13 +199,11 @@ public class ConsoleApp {
         while (true) {
             int choose = input.nextInt();
             if (choose == 1) {
-                status = "IN_PROGRESS";
-                task.setStatus(status);
+                task.setStatus(StatusTask.IN_PROGRESS);
                 manager.updateTask(task, id);
                 break;
             } else if (choose == 2) {
-                status = "DONE";
-                task.setStatus(status);
+                task.setStatus(StatusTask.DONE);
                 manager.updateTask(task, id);
                 break;
             } else {
@@ -229,17 +228,14 @@ public class ConsoleApp {
         System.out.println("Выбирите статус задачи:");
         System.out.println("1- IN_PROGRESS");
         System.out.println("2- DONE");
-        String status;
         while (true) {
             int choose = input.nextInt();
             if (choose == 1) {
-                status = "IN_PROGRESS";
-                subtask.setStatus(status);
+                subtask.setStatus(StatusTask.IN_PROGRESS);
                 manager.updateSubtask(subtask, id);
                 break;
-            } else if (choose == 2) {
-                status = "DONE";
-                subtask.setStatus(status);
+            } else if (choose == 2){
+                subtask.setStatus(StatusTask.DONE);
                 manager.updateSubtask(subtask,id);
                 break;
             } else {

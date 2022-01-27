@@ -19,29 +19,29 @@ public class Epic extends Task {
         this.subtasks = subtasks;
     }
 
-    private String generateStatusEpic() {
+    private StatusTask generateStatusEpic() {
         if (subtasks.isEmpty()) {
-            return "NEW";
+            return StatusTask.NEW;
         }
         int countNew = 0;
         int countDone = 0;
         int countInProgress = 0;
         for (Subtask subtask : subtasks.values()) {
-            String status = subtask.getStatus();
-            if (status.equals("NEW")) {
+            StatusTask status = subtask.getStatus();
+            if (status.equals(StatusTask.NEW)) {
                 countNew++;
-            } else if (status.equals("DONE")) {
+            } else if (status.equals(StatusTask.DONE)) {
                 countDone++;
-            } else if (status.equals("IN_PROGRESS")) {
+            } else if (status.equals(StatusTask.IN_PROGRESS)) {
                 countInProgress++;
             }
         }
         if (countDone != 0 && countNew == 0 && countInProgress == 0) {
-            return "DONE";
+            return StatusTask.DONE;
         } else if (countNew != 0 && countDone == 0 && countInProgress == 0) {
-            return "NEW";
+            return StatusTask.NEW;
         } else {
-            return "IN_PROGRESS";
+            return StatusTask.IN_PROGRESS;
         }
     }
 
@@ -50,7 +50,7 @@ public class Epic extends Task {
     }
 
     @Override
-    public String getStatus() {
+    public StatusTask getStatus() {
         return generateStatusEpic();
     }
 
