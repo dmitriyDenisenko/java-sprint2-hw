@@ -1,17 +1,18 @@
-import backend.Managers;
-import backend.TaskManager;
+import backend.*;
 import backend.tasks.Epic;
 import backend.tasks.StatusTask;
 import backend.tasks.Subtask;
 import backend.tasks.Task;
-import backend.InMemoryTaskManager;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Scanner;
 
 public class ConsoleApp {
     static Scanner input = new Scanner(System.in);
     static TaskManager manager = Managers.getDefault();
+    static InMemoryHistoryManager history = Managers.getDefaultHistory();
     static int serialNumber = 0;
 
     public static void main(String[] args) {
@@ -41,6 +42,9 @@ public class ConsoleApp {
                 case 7:
                     showDeleteMenu();
                     break;
+                case 8:
+                    printHistory();
+                    break;
                 case 0:
                     System.out.println("Лондон гудбай...");
                     return;
@@ -61,6 +65,7 @@ public class ConsoleApp {
         System.out.println("5- Добавление новой задачи, эпика или подзадачи");
         System.out.println("6- Обновление задачи любого типа");
         System.out.println("7- Удаление задачи");
+        System.out.println("8- Просмотреть историю запросов");
         System.out.println("0- Выйти");
     }
 
@@ -166,6 +171,7 @@ public class ConsoleApp {
         System.out.println("Введите индефекатор задачи");
         int id = input.nextInt();
         Task task = manager.getAllTypeTaskById(id);
+        history.add(task);
         System.out.println("Название: " + task.getName() + "; ID: " + id + "; Status: " + task.getStatus());
     }
 
@@ -198,7 +204,6 @@ public class ConsoleApp {
         System.out.println("Выбирите статус задачи:");
         System.out.println("1- IN_PROGRESS");
         System.out.println("2- DONE");
-        String status;
         while (true) {
             int choose = input.nextInt();
             if (choose == 1) {
@@ -269,5 +274,12 @@ public class ConsoleApp {
     }
     public static int getForAddSerialNumber() {
         return serialNumber++;
+    }
+
+    public static void printHistory(){
+        List<Task> allHistory = history.getHistory();
+        for(Task task: allHistory){
+            System.out.println("Название: " + task.getName() + "; ID: " + task.getIndex() + "; Status: " + task.getStatus());
+        }
     }
 }
