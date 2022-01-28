@@ -4,32 +4,35 @@ import backend.tasks.Epic;
 import backend.tasks.Subtask;
 import backend.tasks.Task;
 
-import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public interface TaskManager {
-    public HashMap<Integer, Task> getTasks();
+    List<Task> history();
 
-    public HashMap<Integer, Epic> getEpics();
+    Map<Integer, Task> getTasks();
 
-    public HashMap<Integer, Subtask> getAllSubtasks();
+    Map<Integer, Epic> getEpics();
 
-    public HashMap<Integer, Subtask> getSubtasksEpic(Epic epic);
+    Map<Integer, Subtask> getAllSubtasks();
 
-    public void removeAll();
+    Map<Integer, Subtask> getSubtasksEpic(Epic epic);
 
-    public Task getAllTypeTaskById(int id);
+    void removeAll();
 
-    public void addTask(Task task);
+    Task getAllTypeTaskById(int id);
 
-    public void addEpic(Epic epic);
+    void addTask(Task task);
 
-    public void addSubtask(Subtask subtask, int idEpic);
+    void addEpic(Epic epic);
 
-    public void updateTask(Task task, int id);
+    void addSubtask(Subtask subtask, int idEpic);
 
-    public void updateEpic(Epic epic, int id);
+    void updateTask(Task task, int id);
 
-    public void updateSubtask(Subtask subtask, int id);
+    void updateEpic(Epic epic, int id);
 
-    public void removeByIndex(int id);
+    void updateSubtask(Subtask subtask, int id);
+
+    void removeByIndex(int id);
 }

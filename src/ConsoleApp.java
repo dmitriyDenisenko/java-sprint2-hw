@@ -6,14 +6,13 @@ import backend.tasks.StatusTask;
 import backend.tasks.Subtask;
 import backend.tasks.Task;
 
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 public class ConsoleApp {
     static Scanner input = new Scanner(System.in);
     static TaskManager manager = Managers.getDefault();
-    static InMemoryHistoryManager history = Managers.getDefaultHistory();
     static int serialNumber = 0;
 
     public static void main(String[] args) {
@@ -88,7 +87,7 @@ public class ConsoleApp {
                 System.out.println("Введите индефекатор эпика");
                 int id = input.nextInt();
                 input.nextLine();
-                HashMap<Integer, Epic> epics = manager.getEpics();
+                Map<Integer, Epic> epics = manager.getEpics();
                 if (epics.containsKey(id)) {
                     AddSubtask(id);
                 } else {
@@ -125,7 +124,7 @@ public class ConsoleApp {
         String name = input.nextLine();
         System.out.println("Введите описание");
         String description = input.nextLine();
-        HashMap<Integer, Epic> epics = manager.getEpics();
+        Map<Integer, Epic> epics = manager.getEpics();
         Epic mainEpic = epics.get(id);
         Subtask subtask = new Subtask(mainEpic, name, description, getForAddSerialNumber());
         System.out.println("Индефекатор - " + subtask.getIndex());
@@ -133,7 +132,7 @@ public class ConsoleApp {
     }
 
     public static void showAllTasks() {
-        HashMap<Integer, Task> tasks = manager.getTasks();
+        Map<Integer, Task> tasks = manager.getTasks();
         for (int id : tasks.keySet()) {
             Task task = tasks.get(id);
             System.out.println("Название: " + task.getName() + "; ID: " + id + "; Status: " + task.getStatus());
@@ -141,7 +140,7 @@ public class ConsoleApp {
     }
 
     public static void showAllEpics() {
-        HashMap<Integer, Epic> epics = manager.getEpics();
+        Map<Integer, Epic> epics = manager.getEpics();
         for (int id : epics.keySet()) {
             Epic epic = epics.get(id);
             System.out.println("Название: " + epic.getName() + "; ID: " + id + "; Status: " + epic.getStatus());
@@ -151,10 +150,10 @@ public class ConsoleApp {
     public static void showAllSubtasks() {
         System.out.println("Введите индефекатор эпика");
         int id = input.nextInt();
-        HashMap<Integer, Epic> epics = manager.getEpics();
+        Map<Integer, Epic> epics = manager.getEpics();
         if (epics.containsKey(id)) {
             Epic epic = epics.get(id);
-            HashMap<Integer, Subtask> subtasks = manager.getSubtasksEpic(epic);
+            Map<Integer, Subtask> subtasks = manager.getSubtasksEpic(epic);
             if (!subtasks.isEmpty()) {
                 for (Subtask subtask : subtasks.values()) {
                     System.out.println("Название: " + subtask.getName() + "; id: " + subtask.getIndex() + "; status: "
@@ -172,7 +171,6 @@ public class ConsoleApp {
         System.out.println("Введите индефекатор задачи");
         int id = input.nextInt();
         Task task = manager.getAllTypeTaskById(id);
-        history.add(task);
         System.out.println("Название: " + task.getName() + "; ID: " + id + "; Status: " + task.getStatus());
     }
 
@@ -180,9 +178,9 @@ public class ConsoleApp {
         System.out.println("Введите индефекатор задачи");
         int id = input.nextInt();
         input.nextLine();
-        HashMap<Integer, Task> tasks = manager.getTasks();
-        HashMap<Integer, Epic> epics = manager.getEpics();
-        HashMap<Integer, Subtask> AllSubtasks = manager.getAllSubtasks();
+        Map<Integer, Task> tasks = manager.getTasks();
+        Map<Integer, Epic> epics = manager.getEpics();
+        Map<Integer, Subtask> AllSubtasks = manager.getAllSubtasks();
         if (tasks.containsKey(id)) {
             Task task = tasks.get(id);
             addUpdateTask(task, task.getIndex());
@@ -279,7 +277,7 @@ public class ConsoleApp {
     }
 
     public static void printHistory() {
-        List<Task> allHistory = history.getHistory();
+        List<Task> allHistory = manager.history();
         for (Task task : allHistory) {
             System.out.println("Название: " + task.getName() + "; ID: " + task.getIndex() + "; Status: " + task.getStatus());
         }

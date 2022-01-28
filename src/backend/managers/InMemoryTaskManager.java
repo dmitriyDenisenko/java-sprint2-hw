@@ -4,24 +4,41 @@ import backend.tasks.Epic;
 import backend.tasks.Subtask;
 import backend.tasks.Task;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class InMemoryTaskManager implements TaskManager {
-    private HashMap<Integer, Task> tasks = new HashMap<>();
-    private HashMap<Integer, Epic> epics = new HashMap<>();
+    private Map<Integer, Task> tasks = new HashMap<>();
+    private Map<Integer, Epic> epics = new HashMap<>();
+    private HistoryManager allHistory = Managers.getDefaultHistory();
 
     @Override
-    public HashMap<Integer, Task> getTasks() {
+    public List<Task> history(){
+        List<Task> historyChecker = allHistory.getHistory();
+        List<Task> historyForGetting = new ArrayList<>();
+        for(Task task : historyChecker){
+            if(tasks.containsKey(task.getIndex())
+                    || epics.containsKey(task.getIndex()) || getAllSubtasks().containsKey(task.getIndex())){
+                historyForGetting.add(task);
+            }
+        }
+        return historyForGetting;
+    }
+
+    @Override
+    public Map<Integer, Task> getTasks() {
         return tasks;
     }
 
     @Override
-    public HashMap<Integer, Epic> getEpics() {
+    public Map<Integer, Epic> getEpics() {
         return epics;
     }
 
     @Override
-    public HashMap<Integer, Subtask> getAllSubtasks() {
+    public Map<Integer, Subtask> getAllSubtasks() {
         HashMap<Integer, Subtask> allSubtasks = new HashMap<>();
         for (Epic epic : epics.values()) { //all epics
             for (Subtask subtask : epic.getSubtasks().values()) { //all subtasks in epic
@@ -32,7 +49,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public HashMap<Integer, Subtask> getSubtasksEpic(Epic epic) {
+    public Map<Integer, Subtask> getSubtasksEpic(Epic epic) {
         return epic.getSubtasks();
     }
 
@@ -44,15 +61,18 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Task getAllTypeTaskById(int id) {
-        HashMap<Integer, Subtask> allSubtasks = getAllSubtasks();
+        Map<Integer, Subtask> allSubtasks = getAllSubtasks();
         if (tasks.containsKey(id)) {
             Task task = tasks.get(id);
+            allHistory.add(task);
             return task;
         } else if (epics.containsKey(id)) {
             Epic epic = epics.get(id);
+            allHistory.add(epic);
             return epic;
         } else if (allSubtasks.containsKey(id)) {
             Subtask subtask = allSubtasks.get(id);
+            allHistory.add(subtask);
             return subtask;
         } else {
             System.out.println("Такой задачи нет");
