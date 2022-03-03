@@ -10,21 +10,14 @@ import java.util.List;
 import java.util.Map;
 
 public class InMemoryTaskManager implements TaskManager {
-    private Map<Integer, Task> tasks = new HashMap<>();
-    private Map<Integer, Epic> epics = new HashMap<>();
-    private HistoryManager allHistory = Managers.getDefaultHistory();
+    private final Map<Integer, Task> tasks = new HashMap<>();
+    private final Map<Integer, Epic> epics = new HashMap<>();
+    private final HistoryManager allHistory = Managers.getDefaultHistory();
 
     @Override
-    public List<Task> history(){
-        List<Task> historyChecker = allHistory.getHistory();
-        List<Task> historyForGetting = new ArrayList<>();
-        for(Task task : historyChecker){
-            if(tasks.containsKey(task.getIndex())
-                    || epics.containsKey(task.getIndex()) || getAllSubtasks().containsKey(task.getIndex())){
-                historyForGetting.add(task);
-            }
-        }
-        return historyForGetting;
+    public List<Task> history() {
+        final List<Task> historyChecker = allHistory.getHistory();
+        return historyChecker;
     }
 
     @Override
@@ -39,7 +32,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Map<Integer, Subtask> getAllSubtasks() {
-        HashMap<Integer, Subtask> allSubtasks = new HashMap<>();
+        final HashMap<Integer, Subtask> allSubtasks = new HashMap<>();
         for (Epic epic : epics.values()) { //all epics
             for (Subtask subtask : epic.getSubtasks().values()) { //all subtasks in epic
                 allSubtasks.put(subtask.getIndex(), subtask);
@@ -61,17 +54,17 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Task getAllTypeTaskById(int id) {
-        Map<Integer, Subtask> allSubtasks = getAllSubtasks();
+        final Map<Integer, Subtask> allSubtasks = getAllSubtasks();
         if (tasks.containsKey(id)) {
-            Task task = tasks.get(id);
+            final Task task = tasks.get(id);
             allHistory.add(task);
             return task;
         } else if (epics.containsKey(id)) {
-            Epic epic = epics.get(id);
+            final Epic epic = epics.get(id);
             allHistory.add(epic);
             return epic;
         } else if (allSubtasks.containsKey(id)) {
-            Subtask subtask = allSubtasks.get(id);
+            final Subtask subtask = allSubtasks.get(id);
             allHistory.add(subtask);
             return subtask;
         } else {
@@ -125,7 +118,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void updateSubtask(Subtask subtask, int id) {
-        Epic epic = findEpicSubtask(id);
+        final Epic epic = findEpicSubtask(id);
         if (epic != null) {
             HashMap<Integer, Subtask> subtasks = epic.getSubtasks();
             Subtask oldSubtask = subtasks.get(id); // old Subtask have info about mainEpic
@@ -138,12 +131,22 @@ public class InMemoryTaskManager implements TaskManager {
     public void removeByIndex(int id) {
         if (tasks.containsKey(id)) {
             tasks.remove(id);
+            allHistory.remove(id);
         } else if (epics.containsKey(id)) {
-            epics.remove(id);
-        } else if (getAllSubtasks().containsKey(id)) {
-            Epic epic = findEpicSubtask(id);
+            Epic epic = epics.get(id);
             HashMap<Integer, Subtask> subtasks = epic.getSubtasks();
+            if (!subtasks.isEmpty()) {
+                for (Subtask subtask : subtasks.values()) {
+                    allHistory.remove(subtask.getIndex());
+                }
+            }
+            epics.remove(id);
+            allHistory.remove(id);
+        } else if (getAllSubtasks().containsKey(id)) {
+            final Epic epic = findEpicSubtask(id);
+            final HashMap<Integer, Subtask> subtasks = epic.getSubtasks();
             subtasks.remove(id);
+            allHistory.remove(id);
             epic.setSubtasks(subtasks);
             epics.put(epic.getIndex(), epic);
         } else {

@@ -2,54 +2,109 @@ package backend.managers;
 
 import backend.tasks.Task;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class InMemoryHistoryManager implements HistoryManager {
-    private MemoryLinkedList<Task> history = new MemoryLinkedList<>();
-    private HashMap<Integer, Task> historyToEdit = new HashMap<>();
-
-    private void removeNode(Task task){
-        history.remove(task);
-        historyToEdit.remove(task.getIndex());
-    }
+    private MemoryLinkedList history = new MemoryLinkedList();
 
     @Override
     public void add(Task task) {
-        if(historyToEdit.containsKey(task.getIndex())){
-            removeNode(task);
-        }
-        if (history.size() < 10) {
-            history.addLast(task);
-        } else {
-            history.remove(0);
-            history.addLast(task);
-        }
-        historyToEdit.put(task.getIndex(), task);
+        history.linkLast(task);
     }
 
 
     @Override
     public List<Task> getHistory() {
-        return history.getTasks(history);
+        return history.getTasks();
     }
 
     @Override
-    public void remove(int id){
-        
+    public void remove(int id) {
+        history.removeNode(id);
     }
+
 }
-class MemoryLinkedList<Task> extends LinkedList<Task>{
-    public MemoryLinkedList<Task> linkLast(MemoryLinkedList<Task> tasks, Task last){
-        tasks.addLast(last);
+
+
+class MemoryLinkedList {
+    private Node head;
+    private Node tail;
+    private final HashMap<Integer, Node> historyToEdit = new HashMap<>();
+    private int size = 0;
+
+
+    public int getSize() {
+        return size;
+    }
+
+    public void linkLast(Task element) {
+        if (historyToEdit.containsKey(element.getIndex())) {
+            removeNode(element.getIndex());
+        }
+        final Node oldTail = tail;
+        final Node newNode = new Node(element, null, oldTail);
+        historyToEdit.put(element.getIndex(), newNode);
+        tail = newNode;
+        if (oldTail == null) head = newNode;
+        else oldTail.next = newNode;
+
+        size++;
+
+    }
+
+    public ArrayList<Task> getTasks() {
+        final ArrayList<Task> tasks = new ArrayList<>();
+        Node node = head;
+        while (node != null) {
+            tasks.add(node.data);
+            node = node.next;
+        }
         return tasks;
     }
 
-    public ArrayList<Task> getTasks(MemoryLinkedList<Task> tasks){
-        ArrayList<Task> tasksForManager = new ArrayList<>();
-        tasksForManager.addAll(tasks);
-        return tasksForManager;
+    public void removeNode(int idNode) {
+        Node element = historyToEdit.get(idNode);
+        final Node prev = element.prev;
+        final Node next = element.next;
+        if (prev == null && next != null) {
+            next.prev = null;
+            head = next;
+        } else if (next == null && prev != null) {
+            prev.next = null;
+            tail = prev;
+        } else {
+            if (prev != null && next != null) {
+                prev.next = next;
+                next.prev = prev;
+            }
+        }
+        size--;
+    }
+
+}
+
+class Node {
+    public Task data;
+    public Node next;
+    public Node prev;
+
+    public Node(Task data, Node next, Node prev) {
+        this.data = data;
+        this.next = next;
+        this.prev = prev;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Node node = (Node) o;
+        return Objects.equals(data, node.data) && Objects.equals(next, node.next) && Objects.equals(prev, node.prev);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(data, next, prev);
     }
 }
+

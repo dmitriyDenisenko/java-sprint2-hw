@@ -6,7 +6,7 @@ public class Task {
     private String name;
     private String description;
     private StatusTask status;
-    private int index;
+    private final int index;
 
     public Task(String name, String description, int index) {
         this.name = name;
@@ -48,7 +48,8 @@ public class Task {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Task task = (Task) o;
-        return Objects.equals(name, task.name) && Objects.equals(description, task.description) && Objects.equals(status, task.status);
+        return Objects.equals(name, task.name) && Objects.equals(description, task.description)
+                && Objects.equals(status, task.status);
     }
 
     @Override
