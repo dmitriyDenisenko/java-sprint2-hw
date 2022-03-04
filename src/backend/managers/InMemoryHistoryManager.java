@@ -22,7 +22,6 @@ public class InMemoryHistoryManager implements HistoryManager {
     public void remove(int id) {
         history.removeNode(id);
     }
-
 }
 
 
@@ -45,48 +44,53 @@ class MemoryLinkedList {
         final Node newNode = new Node(element, null, oldTail);
         historyToEdit.put(element.getIndex(), newNode);
         tail = newNode;
-        if (oldTail == null) head = newNode;
-        else oldTail.next = newNode;
+        if (oldTail == null) {
+            head = newNode;
+        } else {
+            oldTail.setNext(newNode);
+        }
 
         size++;
 
     }
 
     public ArrayList<Task> getTasks() {
-        final ArrayList<Task> tasks = new ArrayList<>();
+        final ArrayList<Task> tasks = new ArrayList<>(size);
         Node node = head;
         while (node != null) {
-            tasks.add(node.data);
-            node = node.next;
+            tasks.add(node.getData());
+            node = node.getNext();
         }
         return tasks;
     }
 
     public void removeNode(int idNode) {
-        Node element = historyToEdit.get(idNode);
-        final Node prev = element.prev;
-        final Node next = element.next;
-        if (prev == null && next != null) {
-            next.prev = null;
-            head = next;
-        } else if (next == null && prev != null) {
-            prev.next = null;
-            tail = prev;
-        } else {
-            if (prev != null && next != null) {
-                prev.next = next;
-                next.prev = prev;
+        if (historyToEdit.containsKey(idNode)) {
+            Node element = historyToEdit.get(idNode);
+            final Node prev = element.getPrev();
+            final Node next = element.getNext();
+            if (prev == null && next != null) {
+                next.setPrev(null);
+                head = next;
+            } else if (next == null && prev != null) {
+                prev.setNext(null);
+                tail = prev;
+            } else {
+                if (prev != null && next != null) {
+                    prev.setNext(next);
+                    next.setPrev(prev);
+                }
             }
+            size--;
         }
-        size--;
     }
 
 }
 
 class Node {
-    public Task data;
-    public Node next;
-    public Node prev;
+    private Task data;
+    private Node next;
+    private Node prev;
 
     public Node(Task data, Node next, Node prev) {
         this.data = data;
@@ -106,5 +110,28 @@ class Node {
     public int hashCode() {
         return Objects.hash(data, next, prev);
     }
-}
 
+    public Task getData() {
+        return data;
+    }
+
+    public Node getNext() {
+        return next;
+    }
+
+    public Node getPrev() {
+        return prev;
+    }
+
+    public void setData(Task data) {
+        this.data = data;
+    }
+
+    public void setNext(Node next) {
+        this.next = next;
+    }
+
+    public void setPrev(Node prev) {
+        this.prev = prev;
+    }
+}

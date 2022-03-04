@@ -12,7 +12,7 @@ import java.util.Map;
 public class InMemoryTaskManager implements TaskManager {
     private final Map<Integer, Task> tasks = new HashMap<>();
     private final Map<Integer, Epic> epics = new HashMap<>();
-    private final HistoryManager allHistory = Managers.getDefaultHistory();
+    private HistoryManager allHistory = Managers.getDefaultHistory();
 
     @Override
     public List<Task> history() {
@@ -50,6 +50,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void removeAll() {
         tasks.clear();
         epics.clear();
+        allHistory = Managers.getDefaultHistory();
     }
 
     @Override

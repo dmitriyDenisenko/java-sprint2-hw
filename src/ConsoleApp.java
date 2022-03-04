@@ -47,32 +47,38 @@ public class ConsoleApp {
         System.out.println("-------------------------");
         printHistory();
         System.out.println("-------------------------");
+        manager.addTask(new Task("asdf", "asdf", 999));
+        removeById(999);
+        manager.removeAll();
+        printHistory();
     }
 
-    public static void addTaskOrEpic(int command, String nameTask, String desTask) {
+    public static void addTaskOrEpic(int command, String nameTask, String descriptionTask) {
         String name = nameTask;
-        String description = desTask;
+        String description = descriptionTask;
         switch (command) {
             case 1:
                 Task task = new Task(name, description, getForAddSerialNumber());
-                System.out.println("Индефекатор - " + task.getIndex() + "| Название - " + name + "| Описание - " + desTask);
+                System.out.println("Индефекатор: " + task.getIndex() + "; Название: " + name + "; Описание: "
+                        + descriptionTask);
                 manager.addTask(task);
                 break;
             case 2:
                 Epic epic = new Epic(name, description, getForAddSerialNumber());
-                System.out.println("Индефекатор - " + epic.getIndex() + "| Название - " + name + "| Описание - " + desTask);
+                System.out.println("Индефекатор: " + epic.getIndex() + "; Название: " + name + "; Описание: "
+                        + descriptionTask);
                 manager.addEpic(epic);
                 break;
         }
     }
 
-    public static void addSubtask(int id, String nameTask, String desTask) {
+    public static void addSubtask(int id, String nameTask, String descriptionTask) {
         String name = nameTask;
-        String description = desTask;
+        String description = descriptionTask;
         Map<Integer, Epic> epics = manager.getEpics();
         Epic mainEpic = epics.get(id);
         Subtask subtask = new Subtask(mainEpic, name, description, getForAddSerialNumber());
-        System.out.println("Индефекатор - " + subtask.getIndex() + "| Название - " + name + "| Описание - " + desTask);
+        System.out.println("Индефекатор: " + subtask.getIndex() + "; Название: " + name + "; Описание: " + descriptionTask);
         manager.addSubtask(subtask, id);
     }
 
