@@ -7,6 +7,7 @@ public class Task {
     private String description;
     private StatusTask status;
     private final int index;
+    private TypeTask type = TypeTask.TASK;
 
     public Task(String name, String description, int index) {
         this.name = name;
@@ -43,6 +44,14 @@ public class Task {
         return name;
     }
 
+    protected void setType(TypeTask type){
+        this.type = type;
+    }
+
+    protected TypeTask getType(){
+        return type;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -55,5 +64,11 @@ public class Task {
     @Override
     public int hashCode() {
         return Objects.hash(name, description, status);
+    }
+
+
+    @Override
+    public String toString(){
+        return index + "," + type + "," + name + "," + status + "," + description;
     }
 }

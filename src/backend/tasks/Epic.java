@@ -8,6 +8,7 @@ public class Epic extends Task {
 
     public Epic(String name, String description, int index) {
         super(name, description, index);
+        super.setType(TypeTask.EPIC);
         this.setStatus(generateStatusEpic());
     }
 

@@ -8,6 +8,7 @@ public class Subtask extends Task {
     public Subtask(Epic epic, String name, String description, int index) {
         super(name, description, index);
         this.mainEpic = epic;
+        super.setType(TypeTask.SUBTASK);
     }
 
     public void setMainEpic(Epic mainEpic) {
@@ -32,5 +33,9 @@ public class Subtask extends Task {
         return Objects.hash(super.hashCode(), this.getName());
     }
 
+    @Override
+    public String toString(){
+        return super.getIndex() + "," + super.getType() + "," + super.getName() + "," + super.getStatus() + "," + super.getDescription() + "," + mainEpic.getIndex();
+    }
 
 }

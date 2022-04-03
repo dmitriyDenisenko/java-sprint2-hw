@@ -59,13 +59,13 @@ public class ConsoleApp {
         switch (command) {
             case 1:
                 Task task = new Task(name, description, getForAddSerialNumber());
-                System.out.println("Индефекатор: " + task.getIndex() + "; Название: " + name + "; Описание: "
+                System.out.println("Индификатор: " + task.getIndex() + "; Название: " + name + "; Описание: "
                         + descriptionTask);
                 manager.addTask(task);
                 break;
             case 2:
                 Epic epic = new Epic(name, description, getForAddSerialNumber());
-                System.out.println("Индефекатор: " + epic.getIndex() + "; Название: " + name + "; Описание: "
+                System.out.println("Индификатор: " + epic.getIndex() + "; Название: " + name + "; Описание: "
                         + descriptionTask);
                 manager.addEpic(epic);
                 break;
