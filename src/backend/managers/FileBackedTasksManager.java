@@ -4,23 +4,12 @@ import backend.exceptions.ManagerSaveException;
 import backend.tasks.Epic;
 import backend.tasks.Subtask;
 import backend.tasks.Task;
-import backend.tasks.TypeTask;
 
-import javax.swing.filechooser.FileView;
 import java.io.*;
-import java.net.URI;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class FileBackedTasksManager extends InMemoryTaskManager{
-    private int sizeOfTasks = 0;
-    private int sizeOfEpics = 0;
-    private int getSizeOfSubtasks = 0;
-
     static public void main(String[] args) throws IOException {
         FileBackedTasksManager m = new FileBackedTasksManager();
         Epic epic = new Epic("Купить машину","Полный перечень", 1);
@@ -35,99 +24,62 @@ public class FileBackedTasksManager extends InMemoryTaskManager{
 
     }
 
-
     @Override
     public void addTask(Task task){
         super.addTask(task);
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            e.printStackTrace();
-        }
+        save();
     }
 
     @Override
     public void addEpic(Epic epic){
         super.addEpic(epic);
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            e.printStackTrace();
-        }
+        save();
     }
 
     @Override
     public void addSubtask(Subtask subtask, int idEpic) {
         super.addSubtask(subtask,idEpic);
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            e.printStackTrace();
-        }
+        save();
     }
 
     @Override
     public void updateTask(Task task, int id){
         super.updateTask(task, id);
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            e.printStackTrace();
-        }
+        save();
     }
 
     @Override
     public void updateEpic(Epic epic, int id){
         super.updateEpic(epic,id);
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            e.printStackTrace();
-        }
+        save();
     }
 
     @Override
     public void updateSubtask(Subtask subtask, int id){
         super.updateSubtask(subtask,id);
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            e.printStackTrace();
-        }
+        save();
     }
 
     @Override
     public void removeByIndex(int id) {
         super.removeByIndex(id);
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            e.printStackTrace();
-        }
+        save();
     }
 
     @Override
     public void removeAll(){
         super.removeAll();
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            e.printStackTrace();
-        }
+        save();
     }
 
     @Override
     public Task getAllTypeTaskById(int id){
         Task task = super.getAllTypeTaskById(id);
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            e.printStackTrace();
-        }
+        save();
         return task;
     }
 
-    private void save() throws ManagerSaveException {
+    private void save(){
             try{
                 Writer fileWriter = new FileWriter("oldHistory.txt");
                 fileWriter.write("id,type,name,status,des,epic\n");
@@ -159,34 +111,42 @@ public class FileBackedTasksManager extends InMemoryTaskManager{
 
     }
 
-    static FileBackedTasksManager loadFromFile(File file) throws IOException {
-        FileReader reader = new FileReader(file);
-        BufferedReader br = new BufferedReader(reader);
+    static FileBackedTasksManager loadFromFile(File file) {
+        FileReader reader = null;
         FileBackedTasksManager restored = new FileBackedTasksManager();
-        boolean flag = false;
-        while (br.ready()) {
-            String line = br.readLine();
-            String[] splitLine = line.split(",");
-            if(splitLine.length == 6 || splitLine.length == 5){
-                if(splitLine[1].equals("TASK")){
-                    restored.addTask(new Task(splitLine[2], splitLine[4], Integer.parseInt(splitLine[0])));
-                } else if(splitLine[1].equals("EPIC")) {
-                    restored.addEpic(new Epic(splitLine[2], splitLine[4], Integer.parseInt(splitLine[0])));
-                } else if(splitLine[1].equals("SUBTASK")){
-                    Map<Integer, Epic> epics = restored.getEpics();
-                    Epic epic = epics.get(Integer.parseInt(splitLine[5]));
-                    Subtask sub =  new Subtask(epic,splitLine[2],splitLine[4],Integer.parseInt(splitLine[0]));
-                    restored.addSubtask(sub,epic.getIndex());
-                }
-            } else if(line.isBlank()){
-                flag = true;
-            } else if(flag){
-                for(String numb : splitLine){
-                    restored.getAllTypeTaskById(Integer.parseInt(numb));
+        try {
+            reader = new FileReader(file);
+            BufferedReader br = new BufferedReader(reader);
+            boolean flag = false;
+            while (br.ready()) {
+                String line = br.readLine();
+                String[] splitLine = line.split(",");
+                if(splitLine.length == 6 || splitLine.length == 5){
+                    if(splitLine[1].equals("TASK")){
+                        restored.addTask(new Task(splitLine[2], splitLine[4], Integer.parseInt(splitLine[0])));
+                    } else if(splitLine[1].equals("EPIC")) {
+                        restored.addEpic(new Epic(splitLine[2], splitLine[4], Integer.parseInt(splitLine[0])));
+                    } else if(splitLine[1].equals("SUBTASK")){
+                        Map<Integer, Epic> epics = restored.getEpics();
+                        Epic epic = epics.get(Integer.parseInt(splitLine[5]));
+                        Subtask sub =  new Subtask(epic,splitLine[2],splitLine[4],Integer.parseInt(splitLine[0]));
+                        restored.addSubtask(sub,epic.getIndex());
+                    }
+                } else if(line.isBlank()){
+                    flag = true;
+                } else if(flag){
+                    for(String numb : splitLine){
+                        restored.getAllTypeTaskById(Integer.parseInt(numb));
+                    }
                 }
             }
+            br.close();
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        br.close();
         return restored;
     }
 }
