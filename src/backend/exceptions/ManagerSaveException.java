@@ -1,4 +1,5 @@
 package backend.exceptions;
 
-public class ManagerSaveException extends Exception{
+public class ManagerSaveException extends RuntimeException{
 }
+
