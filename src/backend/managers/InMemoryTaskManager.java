@@ -152,7 +152,7 @@ public class InMemoryTaskManager implements TaskManager {
             epic.setSubtasks(subtasks);
             epics.put(epic.getIndex(), epic);
         } else {
-            System.out.println("Такой задачи нет");
+            throw new Error("Такой задачи нет");
         }
     }
 

@@ -41,14 +41,14 @@ class MemoryLinkedList {
             removeNode(element.getIndex());
         }
         final Node oldTail = tail;
-        final Node newNode = new Node(element, null, oldTail);
-        historyToEdit.put(element.getIndex(), newNode);
+        final Node newNode = new Node(element, oldTail, null);
         tail = newNode;
         if (oldTail == null) {
             head = newNode;
         } else {
-            oldTail.setNext(newNode);
+            oldTail.setPrev(newNode);
         }
+        historyToEdit.put(element.getIndex(), newNode);
 
         size++;
 
