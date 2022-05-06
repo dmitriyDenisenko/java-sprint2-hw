@@ -1,4 +1,5 @@
-id,type,name,status,des,epic
-1,EPIC,Name,NEW,desc
+id,type,name,status,des,epic,start Time,duration,end Time
+1,EPIC,Купить машину,NEW,Полный перечень
+3,SUBTASK,Накопить денег,NEW,опять же устроившись на работу,1
 
-1
+3

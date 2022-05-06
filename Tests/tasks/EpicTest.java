@@ -1,17 +1,12 @@
 package tasks;
 
-import backend.managers.InMemoryTaskManager;
-import backend.managers.Managers;
-import backend.managers.TaskManager;
 import backend.tasks.Epic;
 import backend.tasks.StatusTask;
 import backend.tasks.Subtask;
-import backend.tasks.TypeTask;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -25,7 +20,7 @@ class EpicTest {
 
     @Test
     public void shouldBeEmptySubtusksMap(){
-        HashMap<Integer, Subtask> subtasks = epic.getSubtasks();
+        Map<Integer, Subtask> subtasks = epic.getSubtasks();
         assertTrue(subtasks.isEmpty());
     }
 
@@ -67,5 +62,40 @@ class EpicTest {
         secondSubtask.setStatus(StatusTask.IN_PROGRESS);
         epic.setSubtask(secondSubtask);
         assertEquals(StatusTask.IN_PROGRESS, epic.getStatus());
+    }
+
+    @Test
+    public void shouldBeErrorWhenCheckEndTimeWithEmptySubtasks(){
+        Error ex = assertThrows(Error.class, ()-> epic.getEndTime());
+        assertEquals("Error! Subtasks is empty",ex.getMessage());
+    }
+
+    @Test
+    public void shouldBeHave60MinutesDurationEpicWithOneSubtask(){
+        epic.setSubtask(new Subtask(epic,"name1","des1",2,60,
+                "06.05.2022 05:00"));
+        assertEquals("06.05.2022 06:00", epic.getEndTime());
+    }
+
+    @Test
+    public void shouldBeHave60MinutesDurationEpicWithThreeSubtasksAndOneStartTime(){
+        epic.setSubtask(new Subtask(epic,"name1","des1",2,20,
+                "06.05.2022 05:00"));
+        epic.setSubtask(new Subtask(epic,"name2","des2",3,20,
+                "06.05.2022 05:00"));
+        epic.setSubtask(new Subtask(epic,"name3","des3",4,20,
+                "06.05.2022 05:00"));
+        assertEquals("06.05.2022 06:00", epic.getEndTime());
+    }
+
+    @Test
+    public void shouldBeHaveMinimalStartTimeWithTreeSubtasks(){
+        epic.setSubtask(new Subtask(epic,"name1","des1",2,20,
+                "07.05.2022 05:00"));
+        epic.setSubtask(new Subtask(epic,"name2","des2",3,20,
+                "08.05.2022 05:00"));
+        epic.setSubtask(new Subtask(epic,"name3","des3",4,20,
+                "06.05.2022 05:00"));
+        assertEquals("06.05.2022 06:00", epic.getEndTime());
     }
 }

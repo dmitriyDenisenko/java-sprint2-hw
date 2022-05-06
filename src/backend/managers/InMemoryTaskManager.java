@@ -3,17 +3,29 @@ package backend.managers;
 import backend.tasks.Epic;
 import backend.tasks.Subtask;
 import backend.tasks.Task;
+import backend.tasks.TaskComparator;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
     private final Map<Integer, Task> tasks = new HashMap<>();
     private final Map<Integer, Epic> epics = new HashMap<>();
     private HistoryManager allHistory = Managers.getDefaultHistory();
+    private Set<Task> sortedTasks = new TreeSet<>(new TaskComparator());
 
+    public boolean isValid(Task task){
+        for(Task element : sortedTasks){
+            if(element.getStartTime().equals(task.getStartTime())){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public TreeSet<Task> getSortedTasks(){
+        return (TreeSet<Task>) sortedTasks;
+    }
 
     @Override
     public List<Task> history() {
@@ -49,6 +61,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void removeAll() {
+        sortedTasks.clear();
         tasks.clear();
         epics.clear();
         allHistory = Managers.getDefaultHistory();
@@ -78,11 +91,13 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void addTask(Task task) {
         tasks.put(task.getIndex(), task);
+        sortedTasks.add(task);
     }
 
     @Override
     public void addEpic(Epic epic) {
         epics.put(epic.getIndex(), epic);
+        sortedTasks.add(epic);
     }
 
     @Override
@@ -90,6 +105,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (epics.containsKey(idEpic)) {
             Epic epic = epics.get(idEpic);
             epic.setSubtask(subtask);
+            sortedTasks.add(subtask);
         } else {
             System.out.println("Error. Подзадача не существует.");
         }
@@ -98,7 +114,9 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updateTask(Task task, int id) {
         if (tasks.containsKey(id)) {
+            sortedTasks.remove(tasks.get(id));
             tasks.put(id, task);
+            sortedTasks.add(task);
         } else {
             System.out.println("Error. Задачи не существует.");
         }
@@ -111,7 +129,9 @@ public class InMemoryTaskManager implements TaskManager {
             Epic oldEpic = epics.get(id);
             epic.setSubtasks(oldEpic.getSubtasks()); //new epic now knows its list of subtasks
             updateMainEpicForSubtasks(epic); //Subtasks now know the new epic
+            sortedTasks.remove(epics.get(id));
             epics.put(id, epic);
+            sortedTasks.add(epic);
         } else {
             System.out.println("Error. Такого эпика нет");
         }
@@ -122,31 +142,37 @@ public class InMemoryTaskManager implements TaskManager {
     public void updateSubtask(Subtask subtask, int id) {
         final Epic epic = findEpicSubtask(id);
         if (epic != null) {
-            HashMap<Integer, Subtask> subtasks = epic.getSubtasks();
+            Map<Integer, Subtask> subtasks = epic.getSubtasks();
             Subtask oldSubtask = subtasks.get(id); // old Subtask have info about mainEpic
             subtask.setMainEpic(oldSubtask.getMainEpic()); //now new subtask have info about mainEpic
             subtasks.put(id, subtask); //replace old subtask
+            sortedTasks.remove(oldSubtask);
+            sortedTasks.add(subtask);
         }
     }
 
     @Override
     public void removeByIndex(int id) {
         if (tasks.containsKey(id)) {
+            sortedTasks.remove(tasks.get(id));
             tasks.remove(id);
             allHistory.remove(id);
         } else if (epics.containsKey(id)) {
             Epic epic = epics.get(id);
-            HashMap<Integer, Subtask> subtasks = epic.getSubtasks();
+            Map<Integer, Subtask> subtasks = epic.getSubtasks();
             if (!subtasks.isEmpty()) {
                 for (Subtask subtask : subtasks.values()) {
                     allHistory.remove(subtask.getIndex());
+                    sortedTasks.remove(subtask);
                 }
             }
+            sortedTasks.remove(epics.get(id));
             epics.remove(id);
             allHistory.remove(id);
         } else if (getAllSubtasks().containsKey(id)) {
             final Epic epic = findEpicSubtask(id);
-            final HashMap<Integer, Subtask> subtasks = epic.getSubtasks();
+            final Map<Integer, Subtask> subtasks = epic.getSubtasks();
+            sortedTasks.remove(subtasks.get(id));
             subtasks.remove(id);
             allHistory.remove(id);
             epic.setSubtasks(subtasks);

@@ -1,10 +1,14 @@
 package backend.tasks;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class Epic extends Task {
-    private HashMap<Integer, Subtask> subtasks = new HashMap<>();
+    private Map<Integer, Subtask> subtasks = new LinkedHashMap<>();
 
     public Epic(String name, String description, int index) {
         super(name, description, index);
@@ -16,7 +20,7 @@ public class Epic extends Task {
         subtasks.put(subtask.getIndex(), subtask);
     }
 
-    public void setSubtasks(HashMap<Integer, Subtask> subtasks) {
+    public void setSubtasks(Map<Integer, Subtask> subtasks) {
         this.subtasks = subtasks;
     }
 
@@ -46,8 +50,25 @@ public class Epic extends Task {
         }
     }
 
-    public HashMap<Integer, Subtask> getSubtasks() {
+    public Map<Integer, Subtask> getSubtasks() {
         return subtasks;
+    }
+
+    @Override
+    public String getEndTime(){
+        if(!subtasks.isEmpty()){
+            super.setDuration(Duration.ofMinutes(0));
+            super.setStartTime(subtasks.entrySet().iterator().next().getValue().getStartTime());
+            for(Subtask subtask: subtasks.values()){
+                if(super.getStartTime().isAfter(subtask.getStartTime())){
+                    super.setStartTime(subtask.getStartTime());
+                }
+                super.setDuration(super.getDuration().plus(subtask.getDuration()));
+            }
+            return super.getStartTime().plus(super.getDuration()).format(super.getFormatter());
+        } else {
+            throw new Error("Error! Subtasks is empty");
+        }
     }
 
     @Override

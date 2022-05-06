@@ -6,8 +6,15 @@ import backend.tasks.Task;
 
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 public interface TaskManager {
+
+    boolean isValid(Task task);
+
+    TreeSet<Task> getSortedTasks();
+
     List<Task> history();
 
     Map<Integer, Task> getTasks();

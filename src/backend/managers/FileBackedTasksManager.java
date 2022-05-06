@@ -14,12 +14,12 @@ public class FileBackedTasksManager extends InMemoryTaskManager{
         FileBackedTasksManager m = new FileBackedTasksManager();
         Epic epic = new Epic("Купить машину","Полный перечень", 1);
         m.addEpic(epic);
-        m.addTask(new Task("Устроиться на работу","Нужно пройти весь яндекс Практикум", 2));
+        m.addTask(new Task("Устроиться на работу","Нужно пройти весь яндекс Практикум", 2,60,"06.05.2022 06:00"));
         Subtask sub = new Subtask(epic, "Накопить денег", "опять же устроившись на работу", 3);
         m.addSubtask(sub,1);
         m.getAllTypeTaskById(3);
         FileBackedTasksManager newManager = FileBackedTasksManager.loadFromFile(new File("oldHistory.txt"));
-        System.out.println(newManager.getAllTypeTaskById(1));
+        System.out.println(newManager.getAllTypeTaskById(2));
 
 
     }
@@ -82,7 +82,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager{
     private void save(){
             try{
                 Writer fileWriter = new FileWriter("oldHistory.txt");
-                fileWriter.write("id,type,name,status,des,epic\n");
+                fileWriter.write("id,type,name,status,des,epic,start Time,duration,end Time\n");
                 for(Task task : super.getTasks().values()){
                     fileWriter.write(task.toString());
                     fileWriter.write("\n");
@@ -90,7 +90,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager{
                 for (Epic epic : super.getEpics().values()){
                     fileWriter.write(epic.toString());
                     fileWriter.write("\n");
-                    HashMap<Integer, Subtask> subtasks = epic.getSubtasks();
+                    Map<Integer, Subtask> subtasks = epic.getSubtasks();
                     if(!subtasks.isEmpty()){
                         for(Subtask subtask : subtasks.values()){
                             fileWriter.write(subtask.toString());
