@@ -3,16 +3,38 @@ package backend.managers;
 import backend.tasks.Epic;
 import backend.tasks.Subtask;
 import backend.tasks.Task;
-import backend.tasks.TaskComparator;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
     private final Map<Integer, Task> tasks = new HashMap<>();
     private final Map<Integer, Epic> epics = new HashMap<>();
     private HistoryManager allHistory = Managers.getDefaultHistory();
-    private Set<Task> sortedTasks = new TreeSet<>(new TaskComparator());
 
+    private Set<Task> sortedTasks = new TreeSet<>((o1, o2) -> {
+        if(o1.toString().length() > o2.toString().length()){
+            return 1;
+        } else if(o1.toString().length() < o2.toString().length()){
+            return -1;
+        }
+        else{
+            String[] a = o1.toString().split(",");
+            if(a.length != 5){
+                LocalDateTime firstTime = o1.getStartTime();
+                LocalDateTime secondTime = o2.getStartTime();
+                if(firstTime.isAfter(secondTime)){
+                    return -1;
+                } else if(firstTime.isBefore(secondTime)){
+                    return 1;
+                } else {
+                    return 0;
+                }
+            } else {
+                return -1;
+            }
+            }
+    });
     public boolean isValid(Task task){
         for(Task element : sortedTasks){
             if(element.getStartTime().equals(task.getStartTime())){
