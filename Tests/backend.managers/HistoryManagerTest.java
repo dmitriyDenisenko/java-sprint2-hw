@@ -8,26 +8,27 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class HistoryManagerTest {
     private HistoryManager manager;
+
     @BeforeEach
-    public void createHistoryManager(){
+    public void createHistoryManager() {
         manager = Managers.getDefaultHistory();
     }
 
     @Test
-    public void shouldBeEmptyList(){
+    public void shouldBeEmptyList() {
         assertTrue(manager.getHistory().isEmpty());
     }
 
     @Test
-    public void shouldBeOneTaskWhenAddTwoCloneTasks(){
+    public void shouldBeOneTaskWhenAddTwoCloneTasks() {
         Task cloneTask = new Task("Clone Task", "des", 1);
         manager.add(cloneTask);
         manager.add(cloneTask);
-        assertEquals(1,manager.getHistory().size());
+        assertEquals(1, manager.getHistory().size());
     }
 
     @Test
-    public void shouldBe2TaskAfterRemoveBeginningEndMiddle(){
+    public void shouldBe2TaskAfterRemoveBeginningEndMiddle() {
         manager.add(new Task("First Task", "des", 1));
         manager.add(new Task("Second Task", "des", 2));
         manager.add(new Task("Third Task", "des", 3));

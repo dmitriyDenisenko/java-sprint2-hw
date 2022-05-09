@@ -1,7 +1,5 @@
 package backend.tasks;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Subtask extends Task {
@@ -13,8 +11,8 @@ public class Subtask extends Task {
         super.setType(TypeTask.SUBTASK);
     }
 
-    public Subtask(Epic epic,String name, String description, int index, long durationInMinutes, String starTime){
-        super(name,description,index,durationInMinutes,starTime);
+    public Subtask(Epic epic, String name, String description, int index, long durationInMinutes, String starTime) {
+        super(name, description, index, durationInMinutes, starTime);
         this.mainEpic = epic;
         super.setType(TypeTask.SUBTASK);
     }
@@ -42,7 +40,7 @@ public class Subtask extends Task {
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return super.getIndex() + "," + super.getType() + "," + super.getName() + "," + super.getStatus() + "," + super.getDescription() + "," + mainEpic.getIndex();
     }
 

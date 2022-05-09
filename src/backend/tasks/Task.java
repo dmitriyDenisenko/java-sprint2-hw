@@ -2,11 +2,10 @@ package backend.tasks;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
-public class Task{
+public class Task {
     private String name;
     private String description;
     private StatusTask status;
@@ -14,7 +13,7 @@ public class Task{
     private TypeTask type = TypeTask.TASK;
     private Duration duration;
     private LocalDateTime startTime;
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
 
     public Task(String name, String description, int index) {
@@ -24,13 +23,13 @@ public class Task{
         this.index = index;
     }
 
-    public Task(String name, String description, int index, long durationInMinutes, String starTime){
+    public Task(String name, String description, int index, long durationInMinutes, String starTime) {
         this.name = name;
         this.description = description;
         this.status = StatusTask.NEW;
         this.index = index;
         this.duration = Duration.ofMinutes(durationInMinutes);
-        this.startTime = LocalDateTime.parse(starTime, formatter);
+        this.startTime = LocalDateTime.parse(starTime, FORMATTER);
     }
 
     public int getIndex() {
@@ -54,7 +53,7 @@ public class Task{
     }
 
     public DateTimeFormatter getFormatter() {
-        return formatter;
+        return FORMATTER;
     }
 
     public void setDuration(Duration duration) {
@@ -73,24 +72,27 @@ public class Task{
         return status;
     }
 
+    public LocalDateTime getStartTime(LocalDateTime startTime) {
+        return startTime;
+    }
 
     public String getName() {
         return name;
     }
 
-    protected void setType(TypeTask type){
+    protected void setType(TypeTask type) {
         this.type = type;
     }
 
-    protected TypeTask getType(){
+    protected TypeTask getType() {
         return type;
     }
 
-    public String getEndTime(){
-        if(startTime != null && duration != null){
-            return startTime.plus(duration).format(formatter);
+    public LocalDateTime getEndTime() {
+        if (startTime != null && duration != null) {
+            return startTime.plus(duration);
         } else {
-            throw new Error("Error! Task start time and duration not set");
+            return null;
         }
 
     }
@@ -111,12 +113,12 @@ public class Task{
 
 
     @Override
-    public String toString(){
+    public String toString() {
         StringBuilder string = new StringBuilder(index + "," + type + "," + name + "," + status + "," + description);
-        if(duration != null && startTime != null){
-            string.append("," + startTime.format(formatter) + "," + duration + "," + getEndTime());
+        if (duration != null && startTime != null) {
+            string.append("," + startTime.format(FORMATTER) + "," + duration + "," + getEndTime());
         }
-        return  string.toString();
+        return string.toString();
     }
 
     protected String getDescription() {

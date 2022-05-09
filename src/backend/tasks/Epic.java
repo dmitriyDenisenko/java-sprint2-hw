@@ -2,7 +2,6 @@ package backend.tasks;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -55,20 +54,32 @@ public class Epic extends Task {
     }
 
     @Override
-    public String getEndTime(){
-        if(!subtasks.isEmpty()){
+    public LocalDateTime getEndTime() {
+        if (!subtasks.isEmpty()) {
             super.setDuration(Duration.ofMinutes(0));
             super.setStartTime(subtasks.entrySet().iterator().next().getValue().getStartTime());
-            for(Subtask subtask: subtasks.values()){
-                if(super.getStartTime().isAfter(subtask.getStartTime())){
+            for (Subtask subtask : subtasks.values()) {
+                if (super.getStartTime().isAfter(subtask.getStartTime())) {
                     super.setStartTime(subtask.getStartTime());
                 }
                 super.setDuration(super.getDuration().plus(subtask.getDuration()));
             }
-            return super.getStartTime().plus(super.getDuration()).format(super.getFormatter());
+            return super.getStartTime().plus(super.getDuration());
         } else {
-            throw new Error("Error! Subtasks is empty");
+            return null;
         }
+    }
+
+    @Override
+    public Duration getDuration() {
+        getEndTime();
+        return super.getDuration();
+    }
+
+    @Override
+    public LocalDateTime getStartTime(LocalDateTime startTime) {
+        getEndTime();
+        return super.getStartTime();
     }
 
     @Override

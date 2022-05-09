@@ -11,21 +11,19 @@ public class InMemoryTaskManager implements TaskManager {
     private final Map<Integer, Task> tasks = new HashMap<>();
     private final Map<Integer, Epic> epics = new HashMap<>();
     private HistoryManager allHistory = Managers.getDefaultHistory();
-
     private Set<Task> sortedTasks = new TreeSet<>((o1, o2) -> {
-        if(o1.toString().length() > o2.toString().length()){
+        if (o1.toString().length() > o2.toString().length()) {
             return 1;
-        } else if(o1.toString().length() < o2.toString().length()){
+        } else if (o1.toString().length() < o2.toString().length()) {
             return -1;
-        }
-        else{
+        } else {
             String[] a = o1.toString().split(",");
-            if(a.length != 5){
+            if (a.length != 5) {
                 LocalDateTime firstTime = o1.getStartTime();
                 LocalDateTime secondTime = o2.getStartTime();
-                if(firstTime.isAfter(secondTime)){
+                if (firstTime.isAfter(secondTime)) {
                     return -1;
-                } else if(firstTime.isBefore(secondTime)){
+                } else if (firstTime.isBefore(secondTime)) {
                     return 1;
                 } else {
                     return 0;
@@ -33,19 +31,27 @@ public class InMemoryTaskManager implements TaskManager {
             } else {
                 return -1;
             }
-            }
+        }
     });
-    public boolean isValid(Task task){
-        for(Task element : sortedTasks){
-            if(element.getStartTime().equals(task.getStartTime())){
-                return false;
+
+    @Override
+    public boolean isValid(Task task) {
+        if (task.getEndTime() != null) {
+            for (Task element : sortedTasks) {
+                if (task.getStartTime().equals(element.getStartTime())
+                        || (task.getStartTime().isBefore(element.getStartTime())
+                        && task.getEndTime().isAfter(element.getStartTime()))
+                        || (task.getStartTime().isAfter(element.getStartTime())
+                        && task.getStartTime().isBefore(element.getEndTime()))) {
+                    return false;
+                }
             }
         }
         return true;
     }
 
     @Override
-    public TreeSet<Task> getSortedTasks(){
+    public TreeSet<Task> getPrioritizedTasks() {
         return (TreeSet<Task>) sortedTasks;
     }
 
@@ -112,22 +118,34 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void addTask(Task task) {
-        tasks.put(task.getIndex(), task);
-        sortedTasks.add(task);
+        if (isValid(task)) {
+            tasks.put(task.getIndex(), task);
+            sortedTasks.add(task);
+        } else {
+            throw new Error("Error! Runtimes overlap");
+        }
     }
 
     @Override
     public void addEpic(Epic epic) {
-        epics.put(epic.getIndex(), epic);
-        sortedTasks.add(epic);
+        if (isValid(epic)) {
+            epics.put(epic.getIndex(), epic);
+            sortedTasks.add(epic);
+        } else {
+            throw new Error("Error! Runtimes overlap");
+        }
     }
 
     @Override
     public void addSubtask(Subtask subtask, int idEpic) {
         if (epics.containsKey(idEpic)) {
-            Epic epic = epics.get(idEpic);
-            epic.setSubtask(subtask);
-            sortedTasks.add(subtask);
+            if (isValid(subtask)) {
+                Epic epic = epics.get(idEpic);
+                epic.setSubtask(subtask);
+                sortedTasks.add(subtask);
+            } else {
+                throw new Error("Error! Runtimes overlap");
+            }
         } else {
             System.out.println("Error. Подзадача не существует.");
         }
@@ -136,9 +154,14 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updateTask(Task task, int id) {
         if (tasks.containsKey(id)) {
-            sortedTasks.remove(tasks.get(id));
-            tasks.put(id, task);
-            sortedTasks.add(task);
+            if (isValid(task)) {
+                sortedTasks.remove(tasks.get(id));
+                tasks.put(id, task);
+                sortedTasks.add(task);
+            } else {
+                throw new Error("Error! Runtimes overlap");
+            }
+
         } else {
             System.out.println("Error. Задачи не существует.");
         }
@@ -148,12 +171,16 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updateEpic(Epic epic, int id) {
         if (epics.containsKey(id)) {
-            Epic oldEpic = epics.get(id);
-            epic.setSubtasks(oldEpic.getSubtasks()); //new epic now knows its list of subtasks
-            updateMainEpicForSubtasks(epic); //Subtasks now know the new epic
-            sortedTasks.remove(epics.get(id));
-            epics.put(id, epic);
-            sortedTasks.add(epic);
+            if (isValid(epic)) {
+                Epic oldEpic = epics.get(id);
+                epic.setSubtasks(oldEpic.getSubtasks()); //new epic now knows its list of subtasks
+                updateMainEpicForSubtasks(epic); //Subtasks now know the new epic
+                sortedTasks.remove(epics.get(id));
+                epics.put(id, epic);
+                sortedTasks.add(epic);
+            } else {
+                throw new Error("Error! Runtimes overlap");
+            }
         } else {
             System.out.println("Error. Такого эпика нет");
         }
@@ -164,12 +191,16 @@ public class InMemoryTaskManager implements TaskManager {
     public void updateSubtask(Subtask subtask, int id) {
         final Epic epic = findEpicSubtask(id);
         if (epic != null) {
-            Map<Integer, Subtask> subtasks = epic.getSubtasks();
-            Subtask oldSubtask = subtasks.get(id); // old Subtask have info about mainEpic
-            subtask.setMainEpic(oldSubtask.getMainEpic()); //now new subtask have info about mainEpic
-            subtasks.put(id, subtask); //replace old subtask
-            sortedTasks.remove(oldSubtask);
-            sortedTasks.add(subtask);
+            if (isValid(subtask)) {
+                Map<Integer, Subtask> subtasks = epic.getSubtasks();
+                Subtask oldSubtask = subtasks.get(id); // old Subtask have info about mainEpic
+                subtask.setMainEpic(oldSubtask.getMainEpic()); //now new subtask have info about mainEpic
+                subtasks.put(id, subtask); //replace old subtask
+                sortedTasks.remove(oldSubtask);
+                sortedTasks.add(subtask);
+            } else {
+                throw new Error("Error! Runtimes overlap");
+            }
         }
     }
 

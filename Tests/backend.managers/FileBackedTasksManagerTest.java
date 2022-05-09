@@ -8,22 +8,22 @@ import java.io.File;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>{
+class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager> {
     @BeforeEach
-    public void createManager(){
+    public void createManager() {
         super.manager = Managers.getDefaultFileBackedManager();
     }
 
     @Test
-    public void shouldBeEmptyWhenSaveEmptyAndLoadEmptyTasks(){
+    public void shouldBeEmptyWhenSaveEmptyAndLoadEmptyTasks() {
         manager.removeAll();
         FileBackedTasksManager load = FileBackedTasksManager.loadFromFile(
                 new File("oldHistory.txt"));
-        assertTrue( load.getTasks().isEmpty() && load.getEpics().isEmpty());
+        assertTrue(load.getTasks().isEmpty() && load.getEpics().isEmpty());
     }
 
     @Test
-    public void shouldBeOneEpicWithoutSubtaskInLoadFile(){
+    public void shouldBeOneEpicWithoutSubtaskInLoadFile() {
         manager.removeAll();
         Epic universal = new Epic("Name", "desc", 1);
         manager.addEpic(universal);
@@ -34,13 +34,12 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
 
 
     @Test
-    public void shouldBeEmptyWhenSaveEmptyAndLoadEmptyHistory(){
+    public void shouldBeEmptyWhenSaveEmptyAndLoadEmptyHistory() {
         manager.removeAll();
         FileBackedTasksManager load = FileBackedTasksManager.loadFromFile(
                 new File("oldHistory.txt"));
         assertEquals(0, load.history().size());
     }
-
 
 
 }
