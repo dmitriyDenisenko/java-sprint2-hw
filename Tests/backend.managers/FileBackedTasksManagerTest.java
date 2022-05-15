@@ -11,14 +11,14 @@ import static org.junit.jupiter.api.Assertions.*;
 class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager> {
     @BeforeEach
     public void createManager() {
-        super.manager = Managers.getDefaultFileBackedManager();
+        super.manager = Managers.getDefaultFileBackedManager("resources/oldHistory.txt");
     }
 
     @Test
     public void shouldBeEmptyWhenSaveEmptyAndLoadEmptyTasks() {
         manager.removeAll();
         FileBackedTasksManager load = FileBackedTasksManager.loadFromFile(
-                new File("oldHistory.txt"));
+                new File("resources/oldHistory.txt"));
         assertTrue(load.getTasks().isEmpty() && load.getEpics().isEmpty());
     }
 
@@ -28,7 +28,7 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
         Epic universal = new Epic("Name", "desc", 1);
         manager.addEpic(universal);
         FileBackedTasksManager load = FileBackedTasksManager.loadFromFile(
-                new File("oldHistory.txt"));
+                new File("resources/oldHistory.txt"));
         assertEquals(universal, load.getAllTypeTaskById(1));
     }
 
@@ -37,7 +37,7 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
     public void shouldBeEmptyWhenSaveEmptyAndLoadEmptyHistory() {
         manager.removeAll();
         FileBackedTasksManager load = FileBackedTasksManager.loadFromFile(
-                new File("oldHistory.txt"));
+                new File("resources/oldHistory.txt"));
         assertEquals(0, load.history().size());
     }
 

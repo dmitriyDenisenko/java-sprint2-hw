@@ -72,7 +72,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Map<Integer, Subtask> getAllSubtasks() {
+    public Map<Integer, Subtask> getAllSubtasks() { //+++
         final HashMap<Integer, Subtask> allSubtasks = new HashMap<>();
         for (Epic epic : epics.values()) { //all epics
             for (Subtask subtask : epic.getSubtasks().values()) { //all subtasks in epic
@@ -85,7 +85,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Map<Integer, Subtask> getSubtasksEpic(Epic epic) {
         return epic.getSubtasks();
-    }
+    } //+++
 
     @Override
     public void removeAll() {
@@ -111,7 +111,6 @@ public class InMemoryTaskManager implements TaskManager {
             allHistory.add(subtask);
             return subtask;
         } else {
-            System.out.println("Такой задачи нет");
             return null;
         }
     }
@@ -137,7 +136,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void addSubtask(Subtask subtask, int idEpic) {
+    public void addSubtask(Subtask subtask, int idEpic) { //++
         if (epics.containsKey(idEpic)) {
             if (isValid(subtask)) {
                 Epic epic = epics.get(idEpic);

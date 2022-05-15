@@ -1,15 +1,17 @@
 package backend.managers;
 
+import java.io.IOException;
+
 public class Managers {
-    public static TaskManager getDefault() {
-        return new InMemoryTaskManager();
+    public static TaskManager getDefault() throws IOException, InterruptedException {
+        return new HTTPTaskManager("http://localhost:8088/");
     }
 
     public static HistoryManager getDefaultHistory() {
         return new InMemoryHistoryManager();
     }
 
-    public static FileBackedTasksManager getDefaultFileBackedManager() {
-        return new FileBackedTasksManager();
+    public static FileBackedTasksManager getDefaultFileBackedManager(String path) {
+        return new FileBackedTasksManager(path);
     }
 }

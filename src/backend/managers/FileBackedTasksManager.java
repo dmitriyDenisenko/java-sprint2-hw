@@ -9,18 +9,10 @@ import java.io.*;
 import java.util.Map;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
-    static public void main(String[] args) {
-        FileBackedTasksManager m = new FileBackedTasksManager();
-        Epic epic = new Epic("Купить машину", "Полный перечень", 1);
-        m.addEpic(epic);
-        m.addTask(new Task("Устроиться на работу", "Нужно пройти весь яндекс Практикум", 2, 60, "06.05.2022 06:00"));
-        Subtask sub = new Subtask(epic, "Накопить денег", "опять же устроившись на работу", 3);
-        m.addSubtask(sub, 1);
-        m.getAllTypeTaskById(3);
-        FileBackedTasksManager newManager = FileBackedTasksManager.loadFromFile(new File("oldHistory.txt"));
-        System.out.println(newManager.getAllTypeTaskById(2));
+    String path;
 
-
+    public FileBackedTasksManager(String path){
+        this.path = path;
     }
 
     @Override
@@ -80,7 +72,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     private void save() {
         try {
-            Writer fileWriter = new FileWriter("oldHistory.txt");
+            Writer fileWriter = new FileWriter(path);
             fileWriter.write("id,type,name,status,des,epic,start Time,duration,end Time\n");
             for (Task task : super.getTasks().values()) {
                 fileWriter.write(task.toString());
@@ -112,7 +104,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     static FileBackedTasksManager loadFromFile(File file) {
         FileReader reader = null;
-        FileBackedTasksManager restored = new FileBackedTasksManager();
+        FileBackedTasksManager restored = new FileBackedTasksManager(
+                file.getPath().substring(0, file.getPath().indexOf(".txt"))
+                        + "Restored" + file.getPath().substring(file.getPath().indexOf(".txt") - 4));
         try {
             reader = new FileReader(file);
             BufferedReader br = new BufferedReader(reader);
