@@ -3,26 +3,26 @@ package backend.tasks;
 import java.util.Objects;
 
 public class Subtask extends Task {
-    private Epic mainEpic;
+    private int mainEpicId;
 
-    public Subtask(Epic epic, String name, String description, int index) {
+    public Subtask(int epic, String name, String description, int index) {
         super(name, description, index);
-        this.mainEpic = epic;
+        this.mainEpicId = epic;
         super.setType(TypeTask.SUBTASK);
     }
 
-    public Subtask(Epic epic, String name, String description, int index, long durationInMinutes, String starTime) {
+    public Subtask(int epic, String name, String description, int index, long durationInMinutes, String starTime) {
         super(name, description, index, durationInMinutes, starTime);
-        this.mainEpic = epic;
+        this.mainEpicId = epic;
         super.setType(TypeTask.SUBTASK);
     }
 
-    public void setMainEpic(Epic mainEpic) {
-        this.mainEpic = mainEpic;
+    public void setMainEpicId(int mainEpic) {
+        this.mainEpicId = mainEpic;
     }
 
-    public Epic getMainEpic() {
-        return mainEpic;
+    public int getMainEpic() {
+        return mainEpicId;
     }
 
     @Override
@@ -31,7 +31,7 @@ public class Subtask extends Task {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         Subtask subtask = (Subtask) o;
-        return Objects.equals(mainEpic, subtask.mainEpic);
+        return Objects.equals(mainEpicId, subtask.mainEpicId);
     }
 
     @Override
@@ -41,7 +41,7 @@ public class Subtask extends Task {
 
     @Override
     public String toString() {
-        return super.getIndex() + "," + super.getType() + "," + super.getName() + "," + super.getStatus() + "," + super.getDescription() + "," + mainEpic.getIndex();
+        return super.getIndex() + "," + super.getType() + "," + super.getName() + "," + super.getStatus() + "," + super.getDescription() + "," + mainEpicId;
     }
 
 }

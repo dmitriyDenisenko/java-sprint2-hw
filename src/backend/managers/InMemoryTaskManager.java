@@ -193,7 +193,7 @@ public class InMemoryTaskManager implements TaskManager {
             if (isValid(subtask)) {
                 Map<Integer, Subtask> subtasks = epic.getSubtasks();
                 Subtask oldSubtask = subtasks.get(id); // old Subtask have info about mainEpic
-                subtask.setMainEpic(oldSubtask.getMainEpic()); //now new subtask have info about mainEpic
+                subtask.setMainEpicId(oldSubtask.getMainEpic()); //now new subtask have info about mainEpic
                 subtasks.put(id, subtask); //replace old subtask
                 sortedTasks.remove(oldSubtask);
                 sortedTasks.add(subtask);
@@ -236,7 +236,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     private void updateMainEpicForSubtasks(Epic epic) {
         for (Subtask subtask : epic.getSubtasks().values()) {
-            subtask.setMainEpic(epic);
+            subtask.setMainEpicId(epic.getIndex());
         }
     }
 

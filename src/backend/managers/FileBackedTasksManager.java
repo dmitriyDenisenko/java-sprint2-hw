@@ -11,7 +11,7 @@ import java.util.Map;
 public class FileBackedTasksManager extends InMemoryTaskManager {
     String path;
 
-    public FileBackedTasksManager(String path){
+    public FileBackedTasksManager(String path) {
         this.path = path;
     }
 
@@ -70,7 +70,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return task;
     }
 
-    private void save() {
+    protected void save() {
         try {
             Writer fileWriter = new FileWriter(path);
             fileWriter.write("id,type,name,status,des,epic,start Time,duration,end Time\n");
@@ -122,7 +122,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     } else if (splitLine[1].equals("SUBTASK")) {
                         Map<Integer, Epic> epics = restored.getEpics();
                         Epic epic = epics.get(Integer.parseInt(splitLine[5]));
-                        Subtask sub = new Subtask(epic, splitLine[2], splitLine[4], Integer.parseInt(splitLine[0]));
+                        Subtask sub = new Subtask(epic.getIndex(), splitLine[2], splitLine[4], Integer.parseInt(splitLine[0]));
                         restored.addSubtask(sub, epic.getIndex());
                     }
                 } else if (line.isBlank()) {

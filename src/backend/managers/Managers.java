@@ -4,7 +4,7 @@ import java.io.IOException;
 
 public class Managers {
     public static TaskManager getDefault() throws IOException, InterruptedException {
-        return new HTTPTaskManager("http://localhost:8088/");
+        return new HTTPTaskManager("http://localhost:8070/");
     }
 
     public static HistoryManager getDefaultHistory() {

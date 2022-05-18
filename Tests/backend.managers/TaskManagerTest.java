@@ -14,7 +14,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     public void shouldBeHaveSubtaskEpic() {
         Epic epic = new Epic("Name", "des", 1);
-        Subtask subtask = new Subtask(epic, "nameSub", "desSub", 2);
+        Subtask subtask = new Subtask(epic.getIndex(), "nameSub", "desSub", 2);
         manager.addEpic(epic);
         manager.addSubtask(subtask, 1);
         Subtask forCheck = manager.getAllSubtasks().get(2);
@@ -24,8 +24,8 @@ abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     public void shouldBeHaveEpicStatusInProgress() {
         Epic epic = new Epic("Name", "des", 1);
-        Subtask newSubtask = new Subtask(epic, "nameSub", "desSub", 2);
-        Subtask subtaskDone = new Subtask(epic, "nameDoneSub", "desDoneSub", 3);
+        Subtask newSubtask = new Subtask(epic.getIndex(), "nameSub", "desSub", 2);
+        Subtask subtaskDone = new Subtask(epic.getIndex(), "nameDoneSub", "desDoneSub", 3);
         subtaskDone.setStatus(StatusTask.DONE);
         manager.addEpic(epic);
         manager.addSubtask(newSubtask, 1);
@@ -58,7 +58,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     public void shouldBe1Subtask() {
         Epic epic = new Epic("name", "des", 1);
-        Subtask subtask = new Subtask(epic, "name", "des", 2);
+        Subtask subtask = new Subtask(epic.getIndex(), "name", "des", 2);
         manager.addEpic(epic);
         manager.addSubtask(subtask, 1);
         assertEquals(1, manager.getAllSubtasks().size());
@@ -72,7 +72,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     public void shouldBe1SubtaskInAddedEpic() {
         Epic epic = new Epic("EpicName", "EpicDes", 1);
-        Subtask subtask = new Subtask(epic, "SubName", "SubDes", 2);
+        Subtask subtask = new Subtask(epic.getIndex(), "SubName", "SubDes", 2);
         manager.addEpic(epic);
         manager.addSubtask(subtask, 1);
         assertEquals(1, manager.getSubtasksEpic(epic).size());

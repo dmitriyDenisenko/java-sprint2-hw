@@ -5,13 +5,11 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.nio.ByteBuffer;
-import java.util.concurrent.Flow;
 
 public class KVTaskClient {
     private final String url;
     private KVServer server;
-    private final String TOKEN;
+    private final String token;
 
     public KVTaskClient(String url) throws IOException, InterruptedException {
         this.url = url;
@@ -31,11 +29,11 @@ public class KVTaskClient {
 
         // отправляем запрос и получаем ответ от сервера
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        TOKEN = response.body();
+        token = response.body();
     }
 
     public void put(String key, String json) throws IOException, InterruptedException {
-        URI saver = URI.create(url +"save/"+key+"?"+"API_TOKEN="+TOKEN);
+        URI saver = URI.create(url + "save/" + key + "?" + "API_TOKEN=" + token);
         HttpRequest request = HttpRequest.newBuilder() // получаем экземпляр билдера
                 .POST(HttpRequest.BodyPublishers.ofString(json))  // указываем HTTP-метод запроса
                 .header("content-type", "application/json")
@@ -49,7 +47,7 @@ public class KVTaskClient {
     }
 
     public String load(String key) throws IOException, InterruptedException {
-        URI saver = URI.create(url +"load/"+key+"?"+"API_TOKEN="+TOKEN);
+        URI saver = URI.create(url + "load/" + key + "?" + "API_TOKEN=" + token);
         HttpRequest request = HttpRequest.newBuilder() // получаем экземпляр билдера
                 .GET()  // указываем HTTP-метод запроса
                 .uri(saver) // указываем адрес ресурса

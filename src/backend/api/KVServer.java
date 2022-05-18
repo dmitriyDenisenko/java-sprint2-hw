@@ -1,4 +1,5 @@
 package backend.api;
+
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.IOException;
@@ -14,7 +15,7 @@ import com.sun.net.httpserver.HttpServer;
  * Постман: https://www.getpostman.com/collections/a83b61d9e1c81c10575c
  */
 public class KVServer {
-    public static final int PORT = 8090;
+    public static final int PORT = 8070;
     private final String apiToken;
     private final HttpServer server;
     private final Map<String, String> data = new HashMap<>();
@@ -28,15 +29,15 @@ public class KVServer {
     }
 
     private void load(HttpExchange h) throws IOException {
-        try{
+        try {
             String key = h.getRequestURI().getPath().substring("/save/".length());
-            if(data.containsKey(key)){
+            if (data.containsKey(key)) {
                 h.sendResponseHeaders(200, 0);
                 try (OutputStream os = h.getResponseBody()) {
                     os.write(data.get(key).getBytes());
                 }
             } else {
-                h.sendResponseHeaders(400,0);
+                h.sendResponseHeaders(400, 0);
             }
         } finally {
             h.close();
@@ -118,7 +119,7 @@ public class KVServer {
         h.getResponseBody().write(resp);
     }
 
-    public void stop(){
+    public void stop() {
         server.stop(1);
     }
 }
