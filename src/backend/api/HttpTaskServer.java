@@ -24,12 +24,12 @@ public class HttpTaskServer {
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
     private TaskManager manager = Managers.getDefault();
     private HttpServer httpServer;
-    private final int PORT = 8088;
+    private final int port = 8080;
     private final Gson gson = new Gson();
 
     public HttpTaskServer() throws IOException, InterruptedException {
         this.httpServer = HttpServer.create();
-        httpServer.bind(new InetSocketAddress(PORT), 0);
+        httpServer.bind(new InetSocketAddress(port), 0);
         httpServer.createContext("/tasks/task", new TaskHandler());
         httpServer.createContext("/tasks/subtask", new SubtasksHandler());
         httpServer.createContext("/tasks/epic", new EpicsHandler());
